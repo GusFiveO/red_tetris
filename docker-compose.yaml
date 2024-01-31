@@ -9,5 +9,17 @@ services:
     ports:
       - '${FRONT_PORT}:${FRONT_PORT}'
     volumes:
-      - ./frontend:/home/node/app
-      - /home/node/app/node_modules
+      - ./frontend:/home/node/app/frontend
+      - /home/node/app/frontend/node_modules
+  redtetris_backend:
+    container_name: redtetris_backend
+    build: ./backend/
+    restart: unless-stopped
+    environment:
+      BACK_PORT: ${BACK_PORT}
+    ports:
+      - '${BACK_PORT}:3000'
+    volumes:
+      - ./backend:/home/node/app/backend/
+      - /home/node/app/backend/node_modules
+    
