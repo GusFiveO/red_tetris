@@ -1,0 +1,13 @@
+version: '3'
+services:
+  redtetris_frontend:
+    container_name: redtetris_frontend
+    build: ./frontend/
+    restart: unless-stopped
+    environment:
+      FRONT_PORT: ${FRONT_PORT}
+    ports:
+      - '${FRONT_PORT}:${FRONT_PORT}'
+    volumes:
+      - ./frontend:/home/node/app
+      - /home/node/app/node_modules
