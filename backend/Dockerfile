@@ -9,6 +9,6 @@ WORKDIR /home/node/app/backend/
 
 RUN yarn install
 
-EXPOSE 3000
+EXPOSE 5000
 
 ENTRYPOINT node index.js

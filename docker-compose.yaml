@@ -9,8 +9,9 @@ services:
     ports:
       - '${FRONT_PORT}:${FRONT_PORT}'
     volumes:
-      - ./frontend:/home/node/app/frontend
+      - ./frontend:/home/node/app
       - /home/node/app/frontend/node_modules
+
   redtetris_backend:
     container_name: redtetris_backend
     build: ./backend/
@@ -18,12 +19,13 @@ services:
     environment:
       BACK_PORT: ${BACK_PORT}
     ports:
-      - '${BACK_PORT}:3000'
+      - '${BACK_PORT}:5000'
     volumes:
       - ./backend:/home/node/app/backend/
       - /home/node/app/backend/node_modules
     depends_on:
       - redtetris_postgres
+
   redtetris_postgres:
     container_name: redtetris_postgres
     image: postgres:16.1
@@ -37,7 +39,6 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - ${POSTGRES_PORT}:5432
-    
 
 volumes:
-    postgres:
+  postgres:
