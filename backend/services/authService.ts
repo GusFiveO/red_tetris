@@ -1,4 +1,3 @@
-// const axios = require("axios")
 import axios from 'axios'
 
 export const getGoogleAccessToken = async (code: string | undefined) => {
@@ -31,8 +30,3 @@ export const getGoogleUserInfo = async (accessToken: string | undefined) => {
       const userDetails = userResponse.data;
       return userDetails
 }
-
-// module.exports = {
-//     getGoogleAccessToken,
-//     getGoogleUserInfo
-// }

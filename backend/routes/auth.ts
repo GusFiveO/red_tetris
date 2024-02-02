@@ -1,6 +1,4 @@
-// const express = require("express")
 import express from 'express'
-// const {getGoogleAccessToken, getGoogleUserInfo} = require("../services/authService")
 import  {getGoogleAccessToken, getGoogleUserInfo} from "../services/authService"
 
 // const { OAuth2Client } = require("google-auth-library")
@@ -30,5 +28,3 @@ authRouter.post('/', async (req, res) => {
       res.status(500).json({ message: 'Failed to save code' });
     }
 });
-
-// module.exports = router

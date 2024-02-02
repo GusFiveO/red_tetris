@@ -1,14 +1,10 @@
-// const express = require('express');
 import express from 'express'
-// const cors = require("cors")
 import cors from 'cors'
-// const cookieParser = require('cookie-parser');
 import cookieParser from 'cookie-parser'
+import {authRouter} from "./routes/auth"
 const app = express();
 const port = 5000;
 
-// let authRoute = require("./routes/auth")
-import {authRouter} from "./routes/auth"
 
 app.use(cookieParser());
 app.use(cors({
