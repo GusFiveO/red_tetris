@@ -1,6 +1,7 @@
-const axios = require("axios")
+// const axios = require("axios")
+import axios from 'axios'
 
-const getGoogleAccessToken = async (code) => {
+export const getGoogleAccessToken = async (code: string | undefined) => {
     const response = await axios.post(
         'https://oauth2.googleapis.com/token',
         null,
@@ -18,7 +19,7 @@ const getGoogleAccessToken = async (code) => {
       return accessToken
 }
 
-const getGoogleUserInfo = async (accessToken) => {
+export const getGoogleUserInfo = async (accessToken: string | undefined) => {
     const userResponse = await axios.get(
         'https://www.googleapis.com/oauth2/v3/userinfo',
         {
@@ -31,7 +32,7 @@ const getGoogleUserInfo = async (accessToken) => {
       return userDetails
 }
 
-module.exports = {
-    getGoogleAccessToken,
-    getGoogleUserInfo
-}
+// module.exports = {
+//     getGoogleAccessToken,
+//     getGoogleUserInfo
+// }

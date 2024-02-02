@@ -11,4 +11,4 @@ RUN yarn install
 
 COPY . .
 
-CMD ["npx", "nodemon", "index.js"]
+CMD ["npx", "nodemon", "index.ts"]
