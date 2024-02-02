@@ -1,0 +1,23 @@
+import express from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import {authRouter} from "./routes/auth"
+const app = express();
+const port = 5000;
+
+
+app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}))
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.use('/auth', authRouter)
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
