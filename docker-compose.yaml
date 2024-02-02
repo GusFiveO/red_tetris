@@ -6,6 +6,11 @@ services:
     restart: unless-stopped
     environment:
       FRONT_PORT: ${FRONT_PORT}
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
+      VITE_GOOGLE_CLIENT_SECRET: ${VITE_GOOGLE_CLIENT_SECRET}
+      VITE_GOOGLE_AUTH_URI: ${VITE_GOOGLE_AUTH_URI}
+      VITE_GOOGLE_REDIRECT_URI: ${VITE_GOOGLE_REDIRECT_URI}
     ports:
       - '${FRONT_PORT}:${FRONT_PORT}'
     volumes:
@@ -18,6 +23,9 @@ services:
     restart: unless-stopped
     environment:
       BACK_PORT: ${BACK_PORT}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
     ports:
       - '${BACK_PORT}:5000'
     volumes:
