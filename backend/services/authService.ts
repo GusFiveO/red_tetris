@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const getGoogleAccessToken = async (code: string | undefined) => {
+export const getGoogleAuthData = async (code: string | undefined) => {
     const response = await axios.post(
         'https://oauth2.googleapis.com/token',
         null,
@@ -14,8 +14,8 @@ export const getGoogleAccessToken = async (code: string | undefined) => {
             }
         }
       );
-      const accessToken = response.data.access_token;
-      return accessToken
+      const authData = response.data;
+      return authData
 }
 
 export const getGoogleUserInfo = async (accessToken: string | undefined) => {
