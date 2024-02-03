@@ -11,4 +11,4 @@ RUN yarn install
 
 COPY . .
 
-CMD ["npx", "nodemon", "index.ts"]
+CMD ["sh", "-c", "yarn exec prisma generate && yarn prisma studio && yarn exec nodemon index.ts"]
