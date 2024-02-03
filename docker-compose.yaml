@@ -14,7 +14,7 @@ services:
       - '${FRONT_PORT}:${FRONT_PORT}'
     volumes:
       - ./frontend:/home/node/app
-      - /home/node/app/frontend/node_modules
+      - /home/node/app/node_modules
 
   redtetris_backend:
     container_name: redtetris_backend
@@ -44,8 +44,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PORT: ${POSTGRES_PORT}
-    ports:
-      - ${POSTGRES_PORT}:5432
+    # ports:
+    #   - ${POSTGRES_PORT}:5432
 
 volumes:
   postgres:
