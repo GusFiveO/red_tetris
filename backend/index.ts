@@ -3,7 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import {authRouter} from "./routes/auth"
 const app = express();
-const port = 5000;
+const port = process.env.BACK_PORT;
 
 
 app.use(cookieParser());
