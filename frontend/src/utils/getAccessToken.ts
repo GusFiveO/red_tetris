@@ -7,12 +7,14 @@ export const getAccessToken = async (api_url: string, code: string | null) => {
             'Authorization': code
         }
     }
-    try {
-        console.log(api_url)
-        const response = await axios.post(api_url, {}, option) 
-        console.log(response)
-        return response
-    } catch (error) {
-        console.error(error)
-    }
+    // try {
+    //     console.log(api_url)
+    //     const response = await axios.post(api_url, {}, option) 
+    //     console.log(response)
+    //     return response
+    // } catch (error) {
+    //     console.error(error)
+    // }
+    const response = await axios.post(api_url, {}, option) 
+    return response
 }
