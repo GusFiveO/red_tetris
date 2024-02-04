@@ -53,7 +53,7 @@ authRouter.post('/refresh', async (req, res) => {
       console.log("New Access Token Info:", accessTokenInfo)
 
       res.cookie('accessToken', accessTokenInfo.access_token, {
-        maxAge: parseInt(accessTokenInfo.expires_in),
+        maxAge: parseInt(accessTokenInfo.expires_in) * 1000,
         httpOnly: false
     })
 
