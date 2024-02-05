@@ -1,10 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import {authRouter} from "./routes/auth"
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { authRouter } from "./routes/auth"
+import { playerRouter } from './routes/player';
 
 const app = express();
 const port = process.env.BACK_PORT;
@@ -21,6 +19,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter)
+
+app.use('/player', playerRouter)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
