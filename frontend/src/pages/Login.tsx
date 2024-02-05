@@ -13,6 +13,7 @@ export const Login = () => {
           id='background-video'
           loop
           autoPlay
+          disablePictureInPicture
           className='w-full h-full object-cover blur-md'
         >
           <source src='/public/LoginPageVideo.mp4' type='video/mp4' />
