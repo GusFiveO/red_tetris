@@ -25,6 +25,7 @@ api.interceptors.response.use(
           return response;
         });
     }
+    return Promise.reject(error);
   }
 );
 
