@@ -1,37 +1,23 @@
-import { useSearchParams, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { getAccessToken } from "../utils/getAccessToken"
-
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getAccessToken } from '../utils/getAccessToken';
 
 export const Redirect = () => {
-    const [searchParams] = useSearchParams()
-    const [error, setError] = useState<Boolean>(false)
-    const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const [error, setError] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const code = searchParams.get("code")
-        console.log(code)
-        getAccessToken(`${import.meta.env.VITE_API_URL}/auth`, code)
-        .then(
-            (data) => {
-                console.log("SUCCES:", data)
-                navigate("/")
-            })
-        .catch((error) => {
-            console.log("ERROR:", error)
-            setError(true)
-        })
-    }, [])
+  useEffect(() => {
+    const code = searchParams.get('code');
 
-    return (
-        <>
-        {
-            error ?
-            <h1>ERROR</h1>
-            :
-            <h1>Loading...</h1>
+    getAccessToken(`${import.meta.env.VITE_API_URL}/auth`, code)
+      .then(() => {
+        navigate('/');
+      })
+      .catch(() => {
+        setError(true);
+      });
+  }, [navigate, searchParams]);
 
-        }
-        </>
-    )
-}
+  return <>{error ? <h1>ERROR</h1> : <h1>Loading...</h1>}</>;
+};
