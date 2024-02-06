@@ -1,12 +1,11 @@
-import { Router } from 'express'
-import { AuthenticatedRequest } from '../custom'
-import { validateAccessTokenMiddleware } from '../middleware/authMiddleware'
+import { Router } from 'express';
+import { validateAccessTokenMiddleware } from '../middleware/authMiddleware';
 
-export const playerRouter = Router()
+export const playerRouter = Router();
 
-playerRouter.use("/", validateAccessTokenMiddleware)
+playerRouter.use('/', validateAccessTokenMiddleware);
 
-playerRouter.get("/me", (req: AuthenticatedRequest, res) => {
-	const player = req.user
-	res.status(200).json({data: player})
-})
+playerRouter.get('/me', (req, res) => {
+  const player = req.body.user;
+  res.status(200).json({ data: player });
+});
