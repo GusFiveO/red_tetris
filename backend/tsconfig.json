@@ -1,9 +1,11 @@
 {
-	"compilerOptions": {
-	  // ... other options
-	  "esModuleInterop": true,
-
-	  "types": ["node"]
-	}
+  "compilerOptions": {
+    "target": "ESNext", // Modifier vers ESNext
+    "module": "CommonJS", // Modifier vers CommonJS
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "strict": true
   }
-  
+}
