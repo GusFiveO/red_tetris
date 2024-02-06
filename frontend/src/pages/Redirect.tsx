@@ -10,13 +10,18 @@ export const Redirect = () => {
   useEffect(() => {
     const code = searchParams.get('code');
 
-    getAccessToken(`${import.meta.env.VITE_API_URL}/auth`, code)
-      .then(() => {
-        navigate('/');
-      })
-      .catch(() => {
-        setError(true);
-      });
+    if (code) {
+      getAccessToken(`${import.meta.env.VITE_API_URL}/auth`, code)
+        .then(() => {
+          window.history.replaceState(null, '', window.location.pathname);
+          navigate('/');
+        })
+        .catch(() => {
+          setError(true);
+        });
+    } else {
+      setError(true);
+    }
   }, [navigate, searchParams]);
 
   return <>{error ? <h1>ERROR</h1> : <h1>Loading...</h1>}</>;
