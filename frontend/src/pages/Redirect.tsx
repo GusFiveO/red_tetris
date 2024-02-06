@@ -9,7 +9,7 @@ export const Redirect = () => {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    console.log(code);
+
     getAccessToken(`${import.meta.env.VITE_API_URL}/auth`, code)
       .then(() => {
         navigate('/');
@@ -17,7 +17,7 @@ export const Redirect = () => {
       .catch(() => {
         setError(true);
       });
-  }, []);
+  }, [navigate, searchParams]);
 
   return <>{error ? <h1>ERROR</h1> : <h1>Loading...</h1>}</>;
 };
