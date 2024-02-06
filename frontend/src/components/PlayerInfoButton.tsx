@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import api from '../api/api';
+import { Button } from './Button';
 
 type Props = {
   children: string | ReactNode;
@@ -13,7 +14,7 @@ const getMyInfo = async () => {
 export const PlayerInfoButton = ({ children }: Props) => {
   return (
     <>
-      <button onClick={getMyInfo}>{children}</button>
+      <Button onClick={getMyInfo}>{children}</Button>
     </>
   );
 };
