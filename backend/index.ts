@@ -12,19 +12,6 @@ const port = process.env.BACK_PORT;
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-// io.use(async (socket, next) => {
-//   try {
-//     if (socket.handshake.auth.token) {
-//       next();
-//     } else {
-//       const err = new Error('not authorized');
-//       next(err);
-//     }
-//   } catch (e) {
-//     next(new Error('not authorized'));
-//   }
-// });
-
 app.use(cookieParser());
 app.use(
   cors({
@@ -35,9 +22,6 @@ app.use(
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
@@ -54,5 +38,3 @@ app.use('/player', playerRouter);
 const server = httpServer.listen(port, () => {
   console.log(`Example app listening on port : ${port}`);
 });
-
-// app.listen(port, () => {
