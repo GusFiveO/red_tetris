@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "public/SignInWithGoogleIcon.tsx"],
+  "include": ["src", "src/utils/SignInWithGoogleIcon.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
