@@ -1,11 +1,16 @@
 import { Button } from '../components/Button';
-import { withAuth } from '../hoc/AuthHoc';
+import { withAuth } from '../hoc/RootHoc';
+import '../styles/custom-utilities.css';
 
 export const Home = withAuth(() => {
   return (
-    <div className='flex flex-col items-center justify-center bg-slate-800 h-svh'>
-      <div className='text-white bg-red-500'>RED-TETRIS</div>
-      <Button className='text-white bg-red-500'>PLAY</Button>
+    <div className='main-container flex flex-col items-center justify-center'>
+      <div className='bg-red-500'>RED-TETRIS</div>
+      <Button
+        onClick={() => (window.location.href = 'http://localhost:3000/#lol')}
+      >
+        PLAY
+      </Button>
     </div>
   );
 });

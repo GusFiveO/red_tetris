@@ -1,10 +1,8 @@
 import React from 'react';
-import { withAuth } from '../hoc/AuthHoc';
+import '../styles/custom-utilities.css';
 
 interface Props extends React.AnchorHTMLAttributes<HTMLAnchorElement> {}
 
 export const LinkButton: React.FC<Props> = ({ ...props }) => {
-  return <a {...props} className=''></a>;
+  return <a className='btn' {...props}></a>;
 };
-
-export const WithAuthlinkButton = withAuth(LinkButton);
