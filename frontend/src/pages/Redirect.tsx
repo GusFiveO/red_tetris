@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Error } from '../components/Error';
 import { getAccessToken } from '../utils/getAccessToken';
 
 export const Redirect = () => {
@@ -24,5 +25,13 @@ export const Redirect = () => {
     }
   }, [navigate, searchParams]);
 
-  return <>{error ? <h1>ERROR</h1> : <h1>Loading...</h1>}</>;
+  return (
+    <>
+      {error ? (
+        <Error message='Something went wrong during authentication' />
+      ) : (
+        <h1>Loading...</h1>
+      )}
+    </>
+  );
 };

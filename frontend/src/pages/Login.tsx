@@ -1,5 +1,4 @@
 import { useLocation } from 'react-router-dom';
-import { LinkButton } from '../components/LinkButton';
 import { SignInWithGoogleIcon } from '../utils/SignInWithGoogleIcon';
 import { getGoogleUrl } from '../utils/getGoogleUrl';
 
@@ -15,9 +14,9 @@ export const Login = () => {
         ></img>
       </div>
       <div className='h-full bg-gray-800 flex items-center justify-center w-[500px] z-20'>
-        <LinkButton href={getGoogleUrl(from)}>
+        <a href={getGoogleUrl(from)}>
           <SignInWithGoogleIcon />
-        </LinkButton>
+        </a>
       </div>
     </div>
   );
