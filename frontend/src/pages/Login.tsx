@@ -10,7 +10,7 @@ export const Login = () => {
     <div className='flex w-full h-svh'>
       <div className='bg-gray-700 w-full'>
         <img
-          src='/LoginPageGif1.gif'
+          src='/LoginPageGif.gif'
           className='w-full h-full object-cover blur-md'
         ></img>
       </div>
