@@ -25,6 +25,15 @@ export const Redirect = () => {
     }
   }, [navigate, searchParams]);
 
+  useEffect(() => {
+    // Delay showing the error message for a second
+    const timeoutId = setTimeout(() => {
+      setError(true);
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return (
     <>
       {error ? (
