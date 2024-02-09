@@ -1,42 +1,60 @@
 import { useEffect, useState } from 'react';
+import { Field } from '../components/Field';
+import { Scoreboard } from '../components/Scoreboard';
+import { Spectrum } from '../components/Spectrum';
 import '../styles/custom-utilities.css';
-import {
-  createMatrix,
-  createRandomMatrix,
-  getColorForNumber,
-} from '../utils/gameUtils';
+import { createMatrix, createRandomMatrix } from '../utils/gameUtils';
 
 const COLUMNS = 10;
 const ROWS = 20;
+
+const opponentsSample = [
+  { name: 'Player 1', firstLine: 2, score: 100 },
+  { name: 'Player 2', firstLine: 5, score: 150 },
+  { name: 'Player 3', firstLine: 8, score: 80 },
+  { name: 'Player 4', firstLine: 11, score: 200 },
+  { name: 'Player 5', firstLine: 14, score: 120 },
+  { name: 'Player 6', firstLine: 2, score: 90 },
+  { name: 'Player 7', firstLine: 5, score: 110 },
+  { name: 'Player 8', firstLine: 8, score: 180 },
+  { name: 'Player 9', firstLine: 11, score: 160 },
+  { name: 'Player 10', firstLine: 15, score: 140 },
+];
+
+const scoreSample: ScoreInfo[] = [
+  { name: 'Player 1', score: 100 },
+  { name: 'Player 2', score: 150 },
+  { name: 'Player 3', score: 80 },
+  { name: 'Player 4', score: 200 },
+  { name: 'Player 5', score: 120 },
+  { name: 'Player 6', score: 90 },
+  { name: 'Player 7', score: 110 },
+  { name: 'Player 8', score: 180 },
+  { name: 'Player 9', score: 160 },
+  { name: 'Player 10', score: 140 },
+];
+
+type Matrix = number[][];
+
+export type PlayerSpectrum = {
+  name: string;
+  firstLine: number;
+  score: number;
+};
+
+export type ScoreInfo = {
+  name: string;
+  score: number;
+};
 
 type GameProps = {
   hash: string;
 };
 
-const opponentsSample = [
-  { name: 'Player 1', firstLine: 2, rank: 8 },
-  { name: 'Player 2', firstLine: 5, rank: 4 },
-  { name: 'Player 3', firstLine: 8, rank: 9 },
-  { name: 'Player 4', firstLine: 11, rank: 3 },
-  { name: 'Player 5', firstLine: 14, rank: 10 },
-  { name: 'Player 6', firstLine: 2, rank: 5 },
-  { name: 'Player 7', firstLine: 5, rank: 7 },
-  { name: 'Player 8', firstLine: 8, rank: 1 },
-  { name: 'Player 9', firstLine: 11, rank: 6 },
-  { name: 'Player 10', firstLine: 15, rank: 2 },
-];
-
-type Matrix = number[][];
-
 export const Game = ({ hash }: GameProps) => {
   const [field, setField] = useState<Matrix>(createMatrix(ROWS, COLUMNS));
-  const [opponents, setOpponents] = useState<
-    {
-      name: string;
-      firstLine: number;
-      rank: number;
-    }[]
-  >(opponentsSample);
+  const [opponents, setOpponents] = useState<PlayerSpectrum[]>(opponentsSample);
+  const [scores, setScores] = useState<ScoreInfo[]>(scoreSample);
 
   useEffect(() => {
     let lastKeyPressTime = 0;
@@ -76,51 +94,11 @@ export const Game = ({ hash }: GameProps) => {
     };
   }, []);
 
-  const fieldComponent = field.map((row, rowIndex) => (
-    <div key={rowIndex} className='flex'>
-      {row.map((elem, colIndex) => (
-        <div
-          key={colIndex}
-          className={`block ${getColorForNumber(elem)}`}
-        ></div>
-      ))}
-    </div>
-  ));
-
-  const opponentsComponent = opponents
-    .sort((a, b) => {
-      return a.rank > b.rank ? 1 : 0;
-    })
-    .map(({ name, firstLine }) => {
-      const zerosMatrix = createMatrix(ROWS, COLUMNS);
-      return (
-        <div key={name} className='col-container'>
-          <div>{name}</div>
-          {zerosMatrix.map((row, rowIndex) => (
-            <div key={rowIndex} className='flex'>
-              {row.map((elem, colIndex) => (
-                <div
-                  key={colIndex}
-                  className={`spectre-block ${
-                    ROWS - rowIndex < firstLine ? 'bg-black' : 'bg-gray-600'
-                  }`}
-                ></div>
-              ))}
-            </div>
-          ))}
-        </div>
-      );
-    });
-
   return (
     <div className='main-container flex justify-center items-center'>
-      <div className='col-container'>
-        <div>GAME : {hash}</div>
-        <div className='border border-slate-400 shadow-2xl rounded-md'>
-          {fieldComponent}
-        </div>
-      </div>
-      <div className='spectre-container'>{opponentsComponent}</div>
+      <Scoreboard scoreList={scores} />
+      <Field field={field} />
+      <Spectrum opponentList={opponents} />
     </div>
   );
 };
