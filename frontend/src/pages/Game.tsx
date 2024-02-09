@@ -116,7 +116,9 @@ export const Game = ({ hash }: GameProps) => {
     <div className='main-container flex justify-center items-center'>
       <div className='col-container'>
         <div>GAME : {hash}</div>
-        <div className='border rounded-md'>{fieldComponent}</div>
+        <div className='border border-slate-400 shadow-2xl rounded-md'>
+          {fieldComponent}
+        </div>
       </div>
       <div className='spectre-container'>{opponentsComponent}</div>
     </div>

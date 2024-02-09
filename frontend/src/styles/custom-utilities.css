@@ -18,14 +18,14 @@
     @apply h-10 w-10 border border-slate-900 rounded 
 }
 
+.spectre-container {
+    @apply flex flex-col bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border border-slate-400 shadow-2xl
+}
+
 .spectre {
     @apply h-2
 }
 
 .spectre-block {
     @apply w-1 h-1 border border-black rounded
-}
-
-.spectre-container {
-    @apply flex flex-col bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border
 }
