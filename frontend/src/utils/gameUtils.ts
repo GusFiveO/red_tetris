@@ -26,22 +26,20 @@ export function createRandomMatrix(
 
 export const getColorForNumber = (num: number): string => {
   switch (num) {
-    case 0: // Empty cell
-      return 'bg-gray-800';
     case 1: // Cyan (I)
-      return 'bg-cyan-500';
+      return 'bg-cyan-500 shadow-inner shadow-slate-300';
     case 2: // Blue (J)
-      return 'bg-blue-500';
+      return 'bg-blue-500 shadow-inner shadow-slate-300';
     case 3: // Orange (L)
-      return 'bg-orange-500';
+      return 'bg-orange-500 shadow-inner shadow-slate-300';
     case 4: // Yellow (O)
-      return 'bg-yellow-500';
+      return 'bg-yellow-500 shadow-inner shadow-slate-300';
     case 5: // Green (S)
-      return 'bg-green-500';
+      return 'bg-green-500 shadow-inner shadow-slate-300';
     case 6: // Purple (T)
-      return 'bg-purple-500';
+      return 'bg-purple-500 shadow-inner shadow-slate-300';
     case 7: // Red (Z)
-      return 'bg-red-500';
+      return 'bg-red-500 shadow-inner shadow-slate-300';
     default:
       // return 'bg-white'; // Default color for unknown cells
       return 'bg-gray-800';

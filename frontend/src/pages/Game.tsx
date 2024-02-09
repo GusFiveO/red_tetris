@@ -91,41 +91,34 @@ export const Game = ({ hash }: GameProps) => {
     .sort((a, b) => {
       return a.rank > b.rank ? 1 : 0;
     })
-    .map(({ name, firstLine, rank }) => {
+    .map(({ name, firstLine }) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
-        <div
-          key={name}
-          className='flex flex-col justify-center items-center m-2'
-        >
+        <div key={name} className='col-container'>
           <div>{name}</div>
           {zerosMatrix.map((row, rowIndex) => (
             <div key={rowIndex} className='flex'>
               {row.map((elem, colIndex) => (
                 <div
                   key={colIndex}
-                  className={`w-1 h-1 border border-black ${
+                  className={`spectre-block ${
                     rowIndex > firstLine ? 'bg-black' : 'bg-gray-600'
                   }`}
                 ></div>
               ))}
             </div>
           ))}
-
-          {/* <div className='w-10 h-20 border m-1'>{firstLine}</div> */}
         </div>
       );
     });
 
   return (
     <div className='main-container flex justify-center items-center'>
-      <div className='flex flex-col items-center justify-center'>
+      <div className='col-container'>
         <div>GAME : {hash}</div>
         <div className='border rounded-md'>{fieldComponent}</div>
       </div>
-      <div className='flex flex-col bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border'>
-        {opponentsComponent}
-      </div>
+      <div className='spectre-container'>{opponentsComponent}</div>
     </div>
   );
 };
