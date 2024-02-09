@@ -102,7 +102,7 @@ export const Game = ({ hash }: GameProps) => {
                 <div
                   key={colIndex}
                   className={`spectre-block ${
-                    rowIndex > firstLine ? 'bg-black' : 'bg-gray-600'
+                    ROWS - rowIndex < firstLine ? 'bg-black' : 'bg-gray-600'
                   }`}
                 ></div>
               ))}
