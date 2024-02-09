@@ -2,10 +2,6 @@
     @apply bg-slate-800 text-white h-svh font-mono
 }
 
-.col-container {
-    @apply flex flex-col items-center justify-center m-2
-}
-
 .btn {
     @apply bg-gray-300 text-slate-800 rounded-md m-1 p-1 shadow-gray-500 shadow-md
 }
@@ -18,8 +14,12 @@
     @apply h-10 w-10 border border-slate-900 rounded 
 }
 
-.spectre-container {
-    @apply flex flex-col bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border border-slate-400 shadow-2xl
+.field-container {
+    @apply flex flex-col items-center justify-center m-2 border border-slate-400 shadow-2xl rounded-md
+}
+
+.info-container {
+    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border border-slate-400 shadow-2xl
 }
 
 .spectre {
