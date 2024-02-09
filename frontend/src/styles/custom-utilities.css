@@ -9,4 +9,12 @@
 
 .btn:hover {
     @apply bg-white;
-  }
+}
+
+.block {
+    @apply h-10 w-10 border border-slate-900 rounded 
+}
+
+.spectre {
+    @apply h-2
+}
