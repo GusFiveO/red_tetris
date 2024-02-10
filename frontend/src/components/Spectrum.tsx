@@ -1,5 +1,6 @@
 import { PlayerSpectrum } from '../pages/Game';
 import '../styles/custom-utilities.css';
+import '../styles/hide-scrollbar.css';
 import { createMatrix } from '../utils/gameUtils';
 
 const COLUMNS = 10;
@@ -38,5 +39,5 @@ export const Spectrum = ({ opponentList }: SpectrumProps) => {
       );
     });
 
-  return <div className='info-container'>{opponentsComponent}</div>;
+  return <div className='info-container scrollbar-hide'>{opponentsComponent}</div>;
 };

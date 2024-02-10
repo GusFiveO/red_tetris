@@ -1,5 +1,6 @@
 import { ScoreInfo } from '../pages/Game';
 import '../styles/custom-utilities.css';
+import '../styles/hide-scrollbar.css'
 
 type ScoreboardProps = {
   scoreList: ScoreInfo[];
@@ -18,7 +19,7 @@ export const Scoreboard = ({ scoreList }: ScoreboardProps) => {
       </div>
     ));
   return (
-    <div className='info-container p-1'>
+    <div className='info-container p-1 scrollbar-hide'>
       <div>SCOREBOARD</div>
       <div>{scoreComponent}</div>
     </div>
