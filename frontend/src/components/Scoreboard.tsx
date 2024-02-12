@@ -12,7 +12,7 @@ export const Scoreboard = ({ scoreList }: ScoreboardProps) => {
       return a.score > b.score ? 1 : 0;
     })
     .map(({ name, score }) => (
-      <div key={name} className='flex m-2 md:text-base text-xs'>
+      <div key={name} className='flex m-2 lg:text-xl md:text-base text-xs'>
         {`${name.padEnd(12, '\u00A0')}:  ${score
           .toString()
           .padStart(4, '\u00A0')}`}
