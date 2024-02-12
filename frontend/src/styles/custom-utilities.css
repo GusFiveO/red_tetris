@@ -11,7 +11,7 @@
 }
 
 .block {
-    @apply lg:h-10 lg:w-10 md:w-8 md:h-8 w-5 h-5 border border-slate-900 rounded 
+    @apply md:w-10 md:h-10 w-5 h-5 border border-slate-900 rounded 
 }
 
 .field-container {
