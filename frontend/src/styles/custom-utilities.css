@@ -1,31 +1,31 @@
 .main-container {
-    @apply bg-slate-800 text-white h-svh font-mono
+  @apply bg-slate-800 text-white h-svh font-mono;
 }
 
 .btn {
-    @apply bg-gray-300 text-slate-800 rounded-md m-1 p-1 shadow-gray-500 shadow-md
+  @apply bg-gray-300 text-slate-800 rounded-md m-1 p-1 shadow-gray-500 shadow-md;
 }
 
 .btn:hover {
-    @apply bg-white;
+  @apply bg-white;
 }
 
 .block {
-    @apply h-10 w-10 border border-slate-900 rounded 
+  @apply h-5 w-5 md:h-7 md:w-7 lg:h-10 lg:w-10 xl:h-12 xl:w-12 border border-slate-900 rounded;
 }
 
 .field-container {
-    @apply flex flex-col items-center justify-center m-2 border border-slate-400 shadow-2xl rounded-md
+  @apply flex flex-col items-center justify-center m-2 border border-slate-400 shadow-2xl rounded-md;
 }
 
 .info-container {
-    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border border-slate-400 shadow-2xl
+  @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[75%] m-1 border border-slate-400 shadow-2xl;
 }
 
 .spectre {
-    @apply h-2
+  @apply h-2;
 }
 
 .spectre-block {
-    @apply w-1 h-1 border border-black rounded
+  @apply w-1 h-1 border border-black rounded;
 }

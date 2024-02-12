@@ -19,9 +19,9 @@ model Player {
 
 
 
-model Game {
-  id           Int @id @default(autoincrement())
-  players       Player[]
-  score         Score[]
-  roomId       Int
-}
+// model Game {
+//   id           Int @id @default(autoincrement())
+//   players       Player[]
+//   score         Score[]
+//   roomId       Int
+// }

@@ -4,6 +4,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { authRouter } from './routes/auth';
+import { gameRouter } from './routes/game';
 import { playerRouter } from './routes/player';
 
 const app = express();
@@ -26,6 +27,8 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 
 app.use('/player', playerRouter);
+
+app.use('/game', gameRouter);
 
 const server = httpServer.listen(port, () => {
   console.log(`Example app listening on port : ${port}`);
