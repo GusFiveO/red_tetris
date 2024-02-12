@@ -20,7 +20,7 @@ export const Spectrum = ({ opponentList }: SpectrumProps) => {
       return (
         <div
           key={name}
-          className='flex flex-col items-center justify-center m-2'
+          className='flex flex-col items-center justify-center m-2 md:text-base text-xs'
         >
           <div>{name}</div>
           {zerosMatrix.map((row, rowIndex) => (
@@ -39,5 +39,7 @@ export const Spectrum = ({ opponentList }: SpectrumProps) => {
       );
     });
 
-  return <div className='info-container scrollbar-hide'>{opponentsComponent}</div>;
+  return (
+    <div className='info-container scrollbar-hide'>{opponentsComponent}</div>
+  );
 };

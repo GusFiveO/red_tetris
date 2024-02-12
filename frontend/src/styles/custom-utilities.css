@@ -11,7 +11,7 @@
 }
 
 .block {
-    @apply h-10 w-10 border border-slate-900 rounded 
+    @apply lg:h-10 lg:w-10 md:w-8 md:h-8 w-5 h-5 border border-slate-900 rounded 
 }
 
 .field-container {
@@ -23,9 +23,11 @@
 }
 
 .spectre {
-    @apply h-2
+    /* @apply h-2 text-xs */
+    @apply h-2 
 }
 
 .spectre-block {
-    @apply w-1 h-1 border border-black rounded
+    /* @apply lg:w-1 lg:h-1 md:w-0.5 md:h-0.5 w-0.5 h-0.5 border border-black rounded */
+    @apply md:w-1 md:h-1 md:border w-0.5 h-0.5 border-black rounded
 }
