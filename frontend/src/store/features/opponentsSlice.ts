@@ -37,18 +37,19 @@ const opponentsSlice = createSlice({
       state: OpponentState[],
       action: PayloadAction<{ index: number; score: number }>
     ) => {
-      state[action.payload.index].score = action.payload.score;
+      const { index, score } = action.payload;
+      state[index] = { ...state[index], score };
     },
-    updateOpponentField: (
+    updateOpponentFirstLine: (
       state: OpponentState[],
       action: PayloadAction<{ index: number; firstLine: number }>
     ) => {
-      state[action.payload.index].firstLine = action.payload.firstLine;
+      const { index, firstLine } = action.payload;
+      state[index] = { ...state[index], firstLine };
     },
   },
 });
 
-// Export actions and reducer
-export const { addOpponent, updateOpponentScore, updateOpponentField } =
+export const { addOpponent, updateOpponentScore, updateOpponentFirstLine } =
   opponentsSlice.actions;
 export default opponentsSlice.reducer;

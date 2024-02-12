@@ -13,9 +13,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Provider store={store}>
         <Routes>
           <Route path='/' element={<Home />} />
-          {/* <Route path='/game' element={<Game />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/redirect' element={<Redirect />} /> */}
           <Route path='/redirect' element={<Redirect />} />
         </Routes>
       </Provider>
