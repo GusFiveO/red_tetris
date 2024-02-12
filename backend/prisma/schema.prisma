@@ -16,3 +16,12 @@ model Player {
   name          String?
   refreshToken  String
 }
+
+
+
+model Game {
+  id           Int @id @default(autoincrement())
+  players       Player[]
+  score         Score[]
+  roomId       Int
+}
