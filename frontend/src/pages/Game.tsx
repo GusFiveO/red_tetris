@@ -23,6 +23,9 @@ type GameProps = {
 export const Game = ({ hash }: GameProps) => {
   return (
     <div className='main-container flex justify-center items-center'>
+      <div className='fixed start-px top-px text-2xl text-slate-600'>
+        room : {hash}
+      </div>
       <div className='flex flex-col items-center'>
         <Scoreboard />
         <ModalButton buttonText='quit'>
