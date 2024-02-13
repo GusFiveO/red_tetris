@@ -11,15 +11,12 @@ export const Spectrum = () => {
 
   const opponentsComponent = [...opponentList]
     .sort((a, b) => {
-      return a.score > b.score ? 1 : 0;
+      return a.score < b.score ? 1 : 0;
     })
     .map(({ name, firstLine }) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
-        <div
-          key={name}
-          className='flex flex-col items-center justify-center my-2'
-        >
+        <div key={name} className='flex flex-col items-center justify-center'>
           <div className='m-2 2xl:text-xl md:text-base text-xs'>{name}</div>
           <div className='border border-slate-400 rounded'>
             {zerosMatrix.map((row, rowIndex) => (
@@ -40,7 +37,7 @@ export const Spectrum = () => {
     });
 
   return (
-    <div className='info-container max-h-[50%] scrollbar-hide'>
+    <div className='info-container max-h-[50%] scrollbar-hide overflow-y-scroll'>
       {opponentsComponent}
     </div>
   );

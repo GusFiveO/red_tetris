@@ -8,7 +8,7 @@ export const Scoreboard = () => {
 
   const scoreComponent = [...opponentList]
     .sort((a, b) => {
-      return a.score > b.score ? 1 : 0;
+      return a.score < b.score ? 1 : 0;
     })
     .map(({ name, score }) => (
       <div key={name} className='m-2 2xl:text-xl md:text-base text-xs'>
@@ -19,7 +19,7 @@ export const Scoreboard = () => {
     ));
   return (
     <div className='flex flex-col items-center h-1/2'>
-      <div className='info-container'>
+      <div className='info-container overflow-y-scroll scrollbar-hide'>
         <div className='flex flex-col items-center max-h-20 mx-1'>
           <div className='flex mt-1 2xl:text-xl md:text-base text-xs'>
             SCOREBOARD
@@ -31,7 +31,7 @@ export const Scoreboard = () => {
           </div>
           <hr className='h-px border border-slate-500 w-full'></hr>
         </div>
-        <div className='overflow-y-scroll scrollbar-hide'>{scoreComponent}</div>
+        <div>{scoreComponent}</div>
       </div>
     </div>
   );
