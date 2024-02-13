@@ -24,7 +24,7 @@ export const Game = ({ hash }: GameProps) => {
   return (
     <div className='main-container flex justify-center items-center h-svh'>
       <div className='fixed start-px top-px text-2xl text-slate-600'>
-        room : {hash}
+        room : {hash.split('[')[0]}
       </div>
       <div className='flex flex-col items-center h-1/2'>
         <Scoreboard />
