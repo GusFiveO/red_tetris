@@ -19,7 +19,7 @@ export const Scoreboard = () => {
     ));
   return (
     <div className='flex flex-col items-center h-1/2'>
-      <div className='info-container overflow-y-scroll scrollbar-hide'>
+      <div className='flex info-container overflow-auto scrollbar-hide'>
         <div className='flex flex-col items-center max-h-20 mx-1'>
           <div className='flex mt-1 2xl:text-xl md:text-base text-xs'>
             SCOREBOARD
@@ -31,7 +31,7 @@ export const Scoreboard = () => {
           </div>
           <hr className='h-px border border-slate-500 w-full'></hr>
         </div>
-        <div>{scoreComponent}</div>
+        <div className='overflow-y-scroll scrollbar-hide'>{scoreComponent}</div>
       </div>
     </div>
   );

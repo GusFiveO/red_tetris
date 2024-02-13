@@ -1,5 +1,5 @@
 .main-container {
-    @apply bg-slate-800 text-white h-svh font-mono
+    @apply bg-slate-800 text-white h-svh font-mono bg-gradient-to-tr from-slate-800 to-black
 }
 
 .btn {
