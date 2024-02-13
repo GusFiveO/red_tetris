@@ -40,7 +40,7 @@ export const Spectrum = () => {
     });
 
   return (
-    <div className='info-container max-h-[60%] scrollbar-hide'>
+    <div className='info-container max-h-[50%] scrollbar-hide'>
       {opponentsComponent}
     </div>
   );

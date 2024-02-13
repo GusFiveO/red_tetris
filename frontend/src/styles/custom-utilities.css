@@ -3,7 +3,7 @@
 }
 
 .btn {
-    @apply bg-gray-300 text-slate-800 rounded-md m-1 p-1 shadow-gray-500 shadow-md
+    @apply flex items-center bg-gray-300 text-slate-800 rounded-md m-2 px-2 shadow-gray-500 shadow-md
 }
 
 .btn:hover {
@@ -19,7 +19,7 @@
 }
 
 .info-container {
-    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll m-1 border border-slate-400 shadow-2xl
+    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll m-1 border border-slate-400 shadow-2xl shadow-inner shadow-slate-300
 }
 
 .spectre {
