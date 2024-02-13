@@ -11,7 +11,7 @@ export const Scoreboard = () => {
       return a.score > b.score ? 1 : 0;
     })
     .map(({ name, score }) => (
-      <div key={name} className='m-2 xl:text-xl md:text-base text-xs'>
+      <div key={name} className='m-2 2xl:text-xl md:text-base text-xs'>
         {`${name.padEnd(12, '\u00A0')}:  ${score
           .toString()
           .padStart(4, '\u00A0')}`}
@@ -19,8 +19,8 @@ export const Scoreboard = () => {
     ));
   return (
     <div className='info-container p-1 scrollbar-hide'>
-      <div className='m-2 xl:text-xl md:text-base text-xs'>SCOREBOARD</div>
-      <div className='m-2 xl:text-xl md:text-base text-xs text-green-400 '>
+      <div className='m-2 2xl:text-xl md:text-base text-xs'>SCOREBOARD</div>
+      <div className='m-2 2xl:text-xl md:text-base text-xs text-green-400 '>
         {`${'You'.padEnd(12, '\u00A0')}:  ${playerScore
           .toString()
           .padStart(4, '\u00A0')}`}
