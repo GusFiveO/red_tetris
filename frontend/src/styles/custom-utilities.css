@@ -19,7 +19,7 @@
 }
 
 .info-container {
-    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[60%] m-1 border border-slate-400 shadow-2xl
+    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll m-1 border border-slate-400 shadow-2xl
 }
 
 .spectre {
