@@ -23,11 +23,9 @@
 }
 
 .spectre {
-    /* @apply h-2 text-xs */
     @apply h-2 
 }
 
 .spectre-block {
-    /* @apply lg:w-1 lg:h-1 md:w-0.5 md:h-0.5 w-0.5 h-0.5 border border-black rounded */
     @apply 2xl:w-1.5 2xl:h-1.5 md:w-1 md:h-1 md:border w-0.5 h-0.5 border-black rounded
 }

@@ -26,7 +26,7 @@ export const Game = ({ hash }: GameProps) => {
       <div className='fixed start-px top-px text-2xl text-slate-600'>
         room : {hash}
       </div>
-      <div className='flex flex-col items-center'>
+      <div className='flex flex-col items-center max-h-[60%]'>
         <Scoreboard />
         <ModalButton buttonText='quit'>
           <div>Leave Game ?</div>

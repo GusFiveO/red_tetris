@@ -19,6 +19,21 @@ const opponentsSample = [
   { name: 'Player 8', firstLine: 8, score: 180 },
   { name: 'Player 9', firstLine: 11, score: 160 },
   { name: 'Player 10', firstLine: 15, score: 140 },
+  { name: 'Player 8', firstLine: 8, score: 180 },
+  { name: 'Player 9', firstLine: 11, score: 160 },
+  { name: 'Player 10', firstLine: 15, score: 140 },
+  { name: 'Player 8', firstLine: 8, score: 180 },
+  { name: 'Player 9', firstLine: 11, score: 160 },
+  { name: 'Player 10', firstLine: 15, score: 140 },
+  { name: 'Player 8', firstLine: 8, score: 180 },
+  { name: 'Player 9', firstLine: 11, score: 160 },
+  { name: 'Player 10', firstLine: 15, score: 140 },
+  { name: 'Player 8', firstLine: 8, score: 180 },
+  { name: 'Player 9', firstLine: 11, score: 160 },
+  { name: 'Player 10', firstLine: 15, score: 140 },
+  { name: 'Player 8', firstLine: 8, score: 180 },
+  { name: 'Player 9', firstLine: 11, score: 160 },
+  { name: 'Player 10', firstLine: 15, score: 140 },
 ];
 
 const initialState: OpponentState[] = opponentsSample;

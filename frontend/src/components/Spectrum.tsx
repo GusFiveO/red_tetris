@@ -16,7 +16,10 @@ export const Spectrum = () => {
     .map(({ name, firstLine }) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
-        <div key={name} className='flex flex-col items-center justify-center'>
+        <div
+          key={name}
+          className='flex flex-col items-center justify-center my-2'
+        >
           <div className='m-2 2xl:text-xl md:text-base text-xs'>{name}</div>
           <div className='border border-slate-400 rounded'>
             {zerosMatrix.map((row, rowIndex) => (

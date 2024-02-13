@@ -19,13 +19,15 @@ export const Scoreboard = () => {
     ));
   return (
     <div className='info-container p-1 scrollbar-hide'>
-      <div className='m-2 2xl:text-xl md:text-base text-xs'>SCOREBOARD</div>
-      <div className='m-2 2xl:text-xl md:text-base text-xs text-green-400 '>
-        {`${'You'.padEnd(12, '\u00A0')}:  ${playerScore
-          .toString()
-          .padStart(4, '\u00A0')}`}
+      <div className='flex flex-col items-center'>
+        <div className='m-2 2xl:text-xl md:text-base text-xs'>SCOREBOARD</div>
+        <div className='m-2 2xl:text-xl md:text-base text-xs text-green-400 '>
+          {`${'You'.padEnd(12, '\u00A0')}:  ${playerScore
+            .toString()
+            .padStart(4, '\u00A0')}`}
+        </div>
+        <hr className='h-px border border-slate-500 w-full'></hr>
       </div>
-      <hr className='h-px border border-slate-500 w-full'></hr>
       <div>{scoreComponent}</div>
     </div>
   );
