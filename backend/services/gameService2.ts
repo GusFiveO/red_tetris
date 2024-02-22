@@ -70,7 +70,7 @@ class gameService2 {
       : this.tetrominoList[0];
     const col = this.gameBoard[0].length / 2 - Math.ceil(piece[0].length / 2);
 
-    const row = pieceName === 'I' ? -1 : -2;
+    const row = 0;
     return { piece, col, row, pieceName };
   };
 
@@ -100,6 +100,14 @@ class gameService2 {
 
   private currentPiece = this.getNextPiece();
 
+  private printBoard = (board: number[][]) => {
+    console.log('-------------------');
+    board.forEach((row) => {
+      console.log(...row);
+    });
+    console.log('-------------------');
+  };
+
   private placePiece = () => {
     for (let i = 0; i < this.currentPiece.piece.length; i++) {
       for (let j = 0; j < this.currentPiece.piece[i].length; j++) {
@@ -112,24 +120,25 @@ class gameService2 {
             this.currentPiece.piece[i][j];
         }
       }
+      // this.printBoard(this.gameBoard);
     }
-    for (let i = 0; i < this.gameBoard.length - 1; i >= 0) {
-      if (this.gameBoard[i].every((val) => !!val)) {
-        for (let r = i; r > 0; r--) {
-          for (let c = 0; c < this.gameBoard[r].length; c++) {
-            this.gameBoard[r][c] = this.gameBoard[r - 1][c];
-          }
-        }
-      } else {
-        i--;
-      }
-    }
-    this.currentPiece = this.getNextPiece();
+    // for (let i = 0; i < this.gameBoard.length - 1; i >= 0) {
+    //   if (this.gameBoard[i] && this.gameBoard[i].every((val) => !!val)) {
+    //     for (let r = i; r >= 0; r--) {
+    //       for (let c = 0; c < this.gameBoard[r].length; c++) {
+    //         this.gameBoard[r][c] = this.gameBoard[r - 1][c];
+    //       }
+    //     }
+    //   } else {
+    //     i--;
+    //   }
+    // }
+    // this.currentPiece = this.getNextPiece();
     return true;
   };
 
   public gameLoop = () => {
-    this.placePiece();
+    // this.placePiece();
     if (this.currentPiece) {
       if (
         !this.checkCollision(
@@ -138,7 +147,7 @@ class gameService2 {
           this.currentPiece.col
         )
       ) {
-        this.currentPiece.row--;
+        // this.currentPiece.row--;
         this.placePiece();
       }
     }
@@ -153,7 +162,6 @@ class gameService2 {
         this.currentPiece.col
       )
     ) {
-      this.currentPiece.row = nextRow - 1;
       this.placePiece();
     } else {
       this.currentPiece.row = nextRow;
@@ -193,6 +201,14 @@ class gameService2 {
 
   public gameStatus = () => {
     return this.gameBoard;
+  };
+
+  public getSequence = () => {
+    return this.tetrominoSequence;
+  };
+
+  public getCurrentPiece = () => {
+    return this.currentPiece;
   };
 }
 

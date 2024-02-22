@@ -1,156 +1,90 @@
-const Tetriminos = [
-  [
-    [0, 0, 0],
-    [1, 1, 0],
-    [0, 1, 1],
-  ],
-  [
-    [0, 2, 0],
-    [0, 2, 0],
-    [0, 2, 0],
-  ],
-  [
-    [0, 3, 3],
-    [0, 3, 0],
-    [0, 3, 0],
-  ],
-  [
-    [0, 4, 0],
-    [4, 4, 4],
-    [0, 0, 0],
-  ],
-  [
-    [5, 5],
-    [5, 5],
-  ],
-  [
-    [6, 6, 0],
-    [0, 6, 0],
-    [0, 6, 0],
-  ],
-  [
-    [0, 0, 0],
-    [0, 7, 7],
-    [7, 7, 0],
-  ],
-];
+import { stdout } from 'process';
+import Piece from './pieceService';
 
-class GameService {
-  /*
-   * Game board is a 20x10 grid
-   */
+class gameService {
+  public piece = new Piece();
   private gameBoard: number[][] = Array.from({ length: 20 }, () =>
     Array(10).fill(0)
   );
 
-  /*
-   * Actual playing Tetrimino
-   */
-  private actualTetrimino: number[][] = [];
-
-  constructor() {
-    this.startGame();
-  }
-
-  /*
-   * Giving the new piece to the player
-   */
-  private createNewTetrimino = () => {
-    const TetriminoIndex = Math.floor(Math.random() * Tetriminos.length);
-    this.actualTetrimino = Tetriminos[TetriminoIndex];
+  public printBoard = () => {
+    console.log('-------------------');
+    this.gameBoard.forEach((row) => {
+      row.forEach((val) => {
+        if (val) {
+          stdout.write('\x1b[1;5;31m ' + val + '\x1b[0m');
+        } else {
+          stdout.write('\x1b[1;33m ' + val + '\x1b[0m');
+        }
+      });
+      console.log();
+    });
+    console.log('-------------------');
   };
 
-  /*
-   *
-   */
+  public printPiece = () => {
+    for (let i = 0; i < this.piece.piece.length; i++) {
+      for (let j = 0; j < this.piece.piece[i].length; j++) {
+        if (this.piece.piece[i][j] !== 0) {
+          this.gameBoard[this.piece.row + i][this.piece.col + j] =
+            this.piece.piece[i][j];
+        }
+      }
+    }
+  };
+
+  public checkCollision = (row: number, col: number) => {
+    for (let i = 0; i < this.piece.piece.length; i++) {
+      for (let j = 0; j < this.piece.piece[i].length; j++) {
+        if (
+          this.piece.piece[i][j] !== 0 &&
+          (col + j < 0 ||
+            col + j >= this.gameBoard[0].length ||
+            row + i >= this.gameBoard.length ||
+            this.gameBoard[row + i][col + j] !== 0)
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  public eraseOldPosition = () => {
+    for (let i = 0; i < this.piece.piece.length - 1; i++) {
+      for (let j = 0; j < this.piece.piece[i].length; j++) {
+        if (this.piece.piece[i][j] !== 0) {
+          this.gameBoard[this.piece.row + i][this.piece.col + j] = 0;
+        }
+      }
+    }
+  };
+
   public moveDown = () => {
-    if (this.canFall()) {
-      this.eraseTetrimino();
-      this.actualTetrimino.forEach((row) => row[0]++);
+    if (this.checkCollision(this.piece.row + 1, this.piece.col)) {
+      this.eraseOldPosition();
+      this.piece.row++;
     } else {
-      this.createNewTetrimino();
-      this.updateGame();
+      this.piece.currentPiece = this.piece.getNextPiece();
+      this.piece.row = this.piece.currentPiece.row;
+      this.piece.col = this.piece.currentPiece.col;
+      this.piece.piece = this.piece.currentPiece.piece;
     }
   };
 
   public moveLeft = () => {
-    if (this.canMove(-1)) {
-      this.eraseTetrimino();
-      this.actualTetrimino.forEach((row) => row[1]--);
-      this.updateGame();
+    if (this.checkCollision(this.piece.row, this.piece.col - 1)) {
+      this.eraseOldPosition();
+      this.piece.col--;
     }
   };
 
   public moveRight = () => {
-    if (this.canMove(1)) {
-      this.eraseTetrimino();
-      this.actualTetrimino.forEach((row) => row[1]++);
-      this.updateGame();
+    if (this.checkCollision(this.piece.row, this.piece.col + 1)) {
+      this.eraseOldPosition();
+      this.piece.col++;
     }
-  };
-
-  private canFall = () => {
-    for (const [row, col] of this.actualTetrimino) {
-      if (
-        row + 1 >= this.gameBoard.length ||
-        this.gameBoard[row + 1][col] !== 0
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  private canMove = (direction: number) => {
-    for (const [row, col] of this.actualTetrimino) {
-      if (
-        col + direction < 0 ||
-        col + direction >= this.gameBoard[0].length ||
-        this.gameBoard[row][col + direction] !== 0
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  private eraseTetrimino = () => {
-    this.actualTetrimino.forEach(([row, col]) => {
-      this.gameBoard[row][col] = 0;
-    });
-  };
-
-  public updateGame = () => {
-    if (this.canFall()) {
-      this.eraseTetrimino();
-      this.actualTetrimino.forEach(([row, col]) => {
-        this.gameBoard[row][col] = 1;
-      });
-      this.eraseRow();
-    }
-  };
-
-  public gameStatus = () => {
-    return this.gameBoard;
-  };
-
-  public actualTetriminoStatus = () => {
-    return this.actualTetrimino;
-  };
-
-  // Fonction pour effacer les lignes complètes
-  private eraseRow = () => {
-    for (let row = this.gameBoard.length - 1; row >= 0; row--) {
-      if (this.gameBoard[row].every((cell) => cell !== 0)) {
-        this.gameBoard.splice(row, 1);
-        this.gameBoard.unshift(Array(10).fill(0));
-      }
-    }
-  };
-
-  public startGame = () => {
-    this.createNewTetrimino();
   };
 }
 
-export default GameService;
+export default gameService;

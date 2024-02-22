@@ -5,10 +5,13 @@ const config: Config.InitialOptions = {
   testEnvironment: 'node',
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',
-      isolatedModules: true, // Ajoutez cette ligne
+      isolatedModules: true,
     },
   },
   collectCoverage: true,
