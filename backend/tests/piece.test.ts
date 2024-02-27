@@ -1,35 +1,42 @@
-import Piece from '../services/pieceService';
+import Piece, { getRandomIndex } from "../models/Piece";
 
-describe('Piece class', () => {
+describe("Piece class", () => {
   let piece: Piece;
 
   beforeEach(() => {
     piece = new Piece(); // Initialiser une nouvelle instance avant chaque test
   });
 
-  it('getNextPiece should return a valid piece object', () => {
-    const nextPiece = piece.getNextPiece();
-    expect(nextPiece).toHaveProperty('piece');
-    expect(nextPiece).toHaveProperty('col');
-    expect(nextPiece).toHaveProperty('row');
-    expect(nextPiece).toHaveProperty('pieceName');
+  it("should return a random number between 0 and 6", () => {
+    const randomIndex = getRandomIndex(6);
+    expect(randomIndex).toBeGreaterThanOrEqual(0);
+    expect(randomIndex).toBeLessThanOrEqual(6);
   });
 
-  it('rotate should return a rotated piece', () => {
-    const originalPiece = [
+  it("should return a new piece", () => {
+    const newPiece = piece.generateNewPiece();
+    expect(newPiece).toEqual({
+      piece: expect.any(Array),
+      colomn: 4,
+      row: 0,
+    });
+  });
+
+  it("rotate should return a rotated piece", () => {
+    const originalI = [
       [0, 0, 1, 0],
       [0, 0, 1, 0],
       [0, 0, 1, 0],
       [0, 0, 1, 0],
     ];
 
-    const rotatedPiece = piece.rotate(originalPiece);
-    expect(rotatedPiece).toEqual([
+    const rotatedI = piece.rotate(originalI);
+    expect(rotatedI).toEqual([
       [0, 0, 0, 0],
       [0, 0, 0, 0],
       [1, 1, 1, 1],
       [0, 0, 0, 0],
-    ]); // Adjust this based on your rotation logic
+    ]);
   });
 
   // Add more tests as needed
