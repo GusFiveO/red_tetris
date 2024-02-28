@@ -14,18 +14,19 @@ describe('Game class', () => {
 
   it('should remove the first piece in the sequence', () => {
     game.initalizeGame();
-    game.removeFirstPieceInSequence();
+    game.removeFirstPieceInSequence(game.TetriminoesSequence);
     expect(game.TetriminoesSequence.length).toBe(3);
   });
 
   it('should add a new piece in the sequence', () => {
     game.initalizeGame();
-    game.addPieceInSequence();
+    game.addPieceInSequence(game.TetriminoesSequence, game.PiecesActions);
     expect(game.TetriminoesSequence.length).toBe(5);
   });
 
   it('should print the sequence of pieces', () => {
     game.initalizeGame();
     game.placePieceInGameBoard();
+    expect(game.TetriminoesSequence.length).toBe(4);
   });
 });

@@ -21,19 +21,31 @@ class Game {
     return this.gameBoard;
   };
 
-  addPieceInSequence = () => {
-    this.TetriminoesSequence.push(this.PiecesActions.generateNewPiece());
+  addPieceInSequence = (sequence: PieceType[], action: Piece) => {
+    sequence.push(action.generateNewPiece());
   };
 
-  removeFirstPieceInSequence = () => {
-    this.TetriminoesSequence.shift();
+  removeFirstPieceInSequence = (sequence: PieceType[]) => {
+    sequence.shift();
   };
 
-  printPieceInGameBoard = () => {
-    const currentPiece = this.TetriminoesSequence[CURRENT_PIECE];
+  eraseCurrentPieceOldPosition = (
+    currentPiece: PieceType,
+    sequence: PieceType[]
+  ) => {
     for (let row = 0; row < currentPiece.piece.length; row++) {
       for (let col = 0; col < currentPiece.piece[row].length; col++) {
-        if (this.TetriminoesSequence[CURRENT_PIECE].piece[row][col] !== 0) {
+        if (sequence[CURRENT_PIECE].piece[row][col] !== 0) {
+          this.gameBoard[currentPiece.row + row][currentPiece.colomn + col] = 0;
+        }
+      }
+    }
+  };
+
+  printPieceInGameBoard = (currentPiece: PieceType, sequence: PieceType[]) => {
+    for (let row = 0; row < currentPiece.piece.length; row++) {
+      for (let col = 0; col < currentPiece.piece[row].length; col++) {
+        if (sequence[CURRENT_PIECE].piece[row][col] !== 0) {
           this.gameBoard[currentPiece.row + row][currentPiece.colomn + col] =
             currentPiece.piece[row][col];
         }
@@ -41,20 +53,15 @@ class Game {
     }
   };
 
-  printPieceSequence = () => {
-    this.TetriminoesSequence.forEach((piece, index) => {
-      console.log(`Piece #${index}: `, piece.piece);
+  printPieceSequence = (sequence: PieceType[]) => {
+    sequence.forEach((currentPiece, index) => {
+      console.log(`Piece #${index}: `, currentPiece.piece);
     });
   };
 
   placePieceInGameBoard = () => {
-    console.log('Before: ');
-    this.printPieceSequence();
-    this.printPieceInGameBoard();
-    this.removeFirstPieceInSequence();
-    this.addPieceInSequence();
-    console.log('After: ');
-    this.printPieceSequence();
+    this.removeFirstPieceInSequence(this.TetriminoesSequence);
+    this.addPieceInSequence(this.TetriminoesSequence, this.PiecesActions);
   };
 }
 
