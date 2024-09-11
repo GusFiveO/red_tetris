@@ -4,6 +4,7 @@ import ModalButton from '../components/ModalButton';
 import { Scoreboard } from '../components/Scoreboard';
 import { Spectrum } from '../components/Spectrum';
 import '../styles/custom-utilities.css';
+import { useParams } from 'react-router-dom' 
 
 export type PlayerSpectrum = {
   name: string;
@@ -16,15 +17,15 @@ export type ScoreInfo = {
   score: number;
 };
 
-type GameProps = {
-  hash: string;
-};
+export const Game = () => {
 
-export const Game = ({ hash }: GameProps) => {
+  const { room, player_name } = useParams();
+
+  console.log(room, player_name)
   return (
     <div className='main-container flex justify-center items-center'>
       <div className='fixed start-px top-px text-2xl text-slate-600'>
-        room : {hash.split('[')[0]}
+        room : {room}
       </div>
       <div className='fixed right-px top-px'>
         <ModalButton buttonText='QUIT'>
