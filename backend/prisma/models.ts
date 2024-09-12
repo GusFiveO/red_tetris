@@ -1,6 +1,5 @@
-export type Player = {
-	id?: number
-	email: string
-	name?: string
-	refreshToken: string
-}
+export type PlayerScore = {
+  id?: number;
+  name: string;
+  score: number;
+};
