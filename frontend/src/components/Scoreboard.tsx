@@ -48,9 +48,13 @@ export const Scoreboard = () => {
     })
     .map(({ name, score }, index) => (
       <div key={index} className='m-2 2xl:text-xl md:text-base text-xs'>
-        {`${name.padEnd(12, '\u00A0')}:  ${score
+        {/* {`${name.padEnd(12, '\u00A0')}:  ${score
           .toString()
-          .padStart(4, '\u00A0')}`}
+          .padStart(4, '\u00A0')}`} */}
+        {`${(name.length > 8 ? name.substring(0, 8) + '...' : name).padEnd(
+          12,
+          '\u00A0'
+        )}:  ${score.toString().padStart(4, '\u00A0')}`}
       </div>
     ));
   return (

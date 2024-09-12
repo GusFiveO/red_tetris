@@ -1,9 +1,12 @@
 import { useParams } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
 import ModalButton from '../components/ModalButton';
 import { Spectrum } from '../components/Spectrum';
 import '../styles/custom-utilities.css';
+
+const socket = io('localhost:5000');
 
 export type PlayerSpectrum = {
   name: string;
@@ -20,6 +23,8 @@ export const Game = () => {
   const { room, player_name } = useParams();
 
   console.log(room, player_name);
+  socket.emit('join', room, player_name);
+
   return (
     <div className='main-container flex justify-center items-center'>
       <div className='fixed start-px top-px text-2xl text-slate-600'>
