@@ -8,6 +8,7 @@ const ROWS = 20;
 
 export const Field = () => {
   const field = useAppSelector((state: RootState) => state.player.field);
+  const score = useAppSelector((state: RootState) => state.player.score);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -58,5 +59,10 @@ export const Field = () => {
       ))}
     </div>
   ));
-  return <div className='field-container'>{fieldComponent}</div>;
+  return (
+    <div>
+      <div className='text-center'>SCORE: {score}</div>
+      <div className='field-container'>{fieldComponent}</div>
+    </div>
+  );
 };
