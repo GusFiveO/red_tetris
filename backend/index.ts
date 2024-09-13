@@ -41,19 +41,24 @@ interface Games {
 const games: Games = {};
 
 io.on('connection', (socket: Socket) => {
+  console.log(`New socket connection ${socket.id}`);
   socket.on('joinRoom', (roomName: string, playerName: string) => {
     if (!games[roomName]) {
       console.log(`joinRoom: ${roomName}`);
       games[roomName] = new Game(roomName);
     }
 
-    const allPlayers = games[roomName].getAllPlayers();
-    console.log('allPlayers: ', allPlayers);
-    socket.emit('currentPlayers', allPlayers);
+    const allOponents = games[roomName]
+      .getAllOponents(socket.id)
+      .map((player) => {
+        return { id: player.id, name: player.name, firstLine: 0 };
+      });
+    console.log('allPlayers: ', allOponents);
+    socket.emit('currentPlayers', allOponents);
 
-    games[roomName].addPlayer(socket.id, playerName);
+    const newPlayer = games[roomName].addPlayer(socket.id, playerName);
 
-    socket.to(roomName).emit('playerJoined', playerName);
+    socket.to(roomName).emit('playerJoined', newPlayer);
 
     socket.join(roomName);
   });

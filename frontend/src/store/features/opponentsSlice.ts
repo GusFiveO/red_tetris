@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface OpponentState {
+  id: string;
   name: string;
   firstLine: number;
 }
@@ -46,8 +47,12 @@ const opponentsSlice = createSlice({
     // ) => {
     //   state.push(action.payload);
     // },
-    addOpponent: (state: OpponentState[], action: PayloadAction<string>) => {
-      state.push({ name: action.payload, firstLine: 0 });
+    addOpponent: (
+      state: OpponentState[],
+      action: PayloadAction<OpponentState>
+    ) => {
+      const player = state.find((elem) => elem.id == action.payload.id);
+      if (!player) state.push(action.payload); // check if the player is already present
     },
     removeOpponent: (state: OpponentState[], action: PayloadAction<string>) => {
       const index = state.findIndex((opponent: OpponentState) => {

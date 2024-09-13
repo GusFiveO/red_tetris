@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createMatrix } from '../../utils/gameUtils';
 
 interface PlayerState {
+  id: string;
   score: number;
   field: number[][];
 }
 
 const initialState: PlayerState = {
+  id: '',
   score: 200,
   field: createMatrix(20, 10),
 };

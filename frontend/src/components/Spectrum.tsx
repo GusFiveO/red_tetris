@@ -8,6 +8,9 @@ const ROWS = 20;
 
 export const Spectrum = () => {
   const opponentList = useAppSelector((state: RootState) => state.opponents);
+  // const id = useAppSelector((state: RootState) => state.player.id);
+
+  // console.log('id:', id);
 
   const opponentsComponent = [...opponentList]
     .sort((a, b) => {

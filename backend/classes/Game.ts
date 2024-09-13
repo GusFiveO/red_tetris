@@ -21,6 +21,7 @@ export class Game {
     if (!this.players[playerId]) {
       this.players[playerId] = new Player(playerId, playerName);
       console.log(`Player ${playerName} join the game ${this.roomName}`);
+      return { id: playerId, name: playerName, firstLine: 0 };
     }
   }
 
@@ -36,7 +37,13 @@ export class Game {
   }
 
   getAllPlayers() {
-    return Object.values(this.players).map((player) => player.name);
+    return Object.values(this.players);
+  }
+
+  getAllOponents(playerId: string) {
+    return Object.values(this.players).filter(
+      (player) => player.id != playerId
+    );
   }
 
   broadcast(event: string, payload: any) {}

@@ -8,6 +8,7 @@ import { Spectrum } from '../components/Spectrum';
 import { addOpponent, removeOpponent } from '../store/features/opponentsSlice';
 import { useAppDispatch } from '../store/store';
 import '../styles/custom-utilities.css';
+import { Player } from '../types';
 
 const socket = io('localhost:5000');
 
@@ -26,10 +27,18 @@ export const Game = () => {
   const { room, playerName } = useParams();
   const dispatch = useAppDispatch();
 
+  socket.emit('joinRoom', room, playerName);
+
   useEffect(() => {
-    function onCurrentPlayers(players: string[]) {
+    console.log('Use effect');
+    function onCurrentPlayers(players: Player[]) {
       console.log('currentPlayers: ', players);
-      players.forEach((name: string) => dispatch(addOpponent(name)));
+      players.forEach((player) => dispatch(addOpponent(player)));
+    }
+
+    function onPlayerJoined(player: Player) {
+      console.log('playerJoined: ', player);
+      dispatch(addOpponent(player));
     }
 
     function onPlayerLeaved(playerName: string) {
@@ -39,13 +48,15 @@ export const Game = () => {
 
     socket.on('currentPlayers', onCurrentPlayers);
     socket.on('playerLeaved', onPlayerLeaved);
+    socket.on('playerJoined', onPlayerJoined);
     return () => {
       socket.off('currentPlayers', onCurrentPlayers);
       socket.off('playerLeaved', onPlayerLeaved);
+      socket.off('playerJoined', onPlayerJoined);
     };
   }, [dispatch]);
+
   console.log(room, playerName);
-  socket.emit('joinRoom', room, playerName);
 
   return (
     <div className='main-container flex justify-center items-center'>
