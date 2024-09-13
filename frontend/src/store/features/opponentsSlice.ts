@@ -5,8 +5,6 @@ interface OpponentState {
   firstLine: number;
 }
 
-// const initialState: OpponentState[] = [];
-
 const opponentsSample = [
   { name: 'Player 1', firstLine: 2 },
   { name: 'Player 2', firstLine: 5 },
@@ -35,17 +33,29 @@ const opponentsSample = [
   { name: 'Player 10', firstLine: 15 },
 ];
 
-const initialState: OpponentState[] = opponentsSample;
+// const initialState: OpponentState[] = opponentsSample;
+const initialState: OpponentState[] = [];
 
 const opponentsSlice = createSlice({
   name: 'opponents',
   initialState,
   reducers: {
-    addOpponent: (
-      state: OpponentState[],
-      action: PayloadAction<OpponentState>
-    ) => {
-      state.push(action.payload);
+    // addOpponent: (
+    //   state: OpponentState[],
+    //   action: PayloadAction<OpponentState>
+    // ) => {
+    //   state.push(action.payload);
+    // },
+    addOpponent: (state: OpponentState[], action: PayloadAction<string>) => {
+      state.push({ name: action.payload, firstLine: 0 });
+    },
+    removeOpponent: (state: OpponentState[], action: PayloadAction<string>) => {
+      const index = state.findIndex((opponent: OpponentState) => {
+        return opponent.name == action.payload;
+      });
+      if (index > -1) {
+        state.splice(index, 1);
+      }
     },
     updateOpponentFirstLine: (
       state: OpponentState[],
@@ -57,6 +67,6 @@ const opponentsSlice = createSlice({
   },
 });
 
-export const { addOpponent, updateOpponentScore, updateOpponentFirstLine } =
+export const { addOpponent, removeOpponent, updateOpponentFirstLine } =
   opponentsSlice.actions;
 export default opponentsSlice.reducer;

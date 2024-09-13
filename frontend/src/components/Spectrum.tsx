@@ -13,10 +13,10 @@ export const Spectrum = () => {
     .sort((a, b) => {
       return a.score < b.score ? 1 : 0;
     })
-    .map(({ name, firstLine }) => {
+    .map(({ name, firstLine }, index) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
-        <div key={name} className='flex flex-col items-center justify-center'>
+        <div key={index} className='flex flex-col items-center justify-center'>
           <div className='m-2 2xl:text-xl md:text-base text-xs'>{name}</div>
           <div className='border border-slate-400 rounded'>
             {zerosMatrix.map((row, rowIndex) => (

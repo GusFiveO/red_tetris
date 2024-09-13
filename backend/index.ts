@@ -2,7 +2,8 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import { Game } from './classes/Game';
 import { playerScoreRouter } from './routes/playerScore';
 
 const app = express();
@@ -33,24 +34,45 @@ const server = httpServer.listen(port, () => {
   console.log(`Example app listening on port : ${port}`);
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('join', async (room, name) => {
-    socket.data.name = name;
+interface Games {
+  [roomName: string]: Game;
+}
 
-    const sockets = await io.in(room).allSockets(); // Get all socket IDs in the room
-    const playersInRoom: string[] = [];
-    socket.join(room);
+const games: Games = {};
 
-    sockets.forEach((socketId) => {
-      const clientSocket = io.sockets.sockets.get(socketId);
-      if (clientSocket) {
-        console.log(clientSocket.data.name);
-        playersInRoom.push(clientSocket.data.name); // Get player info from each socket
+io.on('connection', (socket: Socket) => {
+  socket.on('joinRoom', (roomName: string, playerName: string) => {
+    if (!games[roomName]) {
+      console.log(`joinRoom: ${roomName}`);
+      games[roomName] = new Game(roomName);
+    }
+
+    const allPlayers = games[roomName].getAllPlayers();
+    console.log('allPlayers: ', allPlayers);
+    socket.emit('currentPlayers', allPlayers);
+
+    games[roomName].addPlayer(socket.id, playerName);
+
+    socket.to(roomName).emit('playerJoined', playerName);
+
+    socket.join(roomName);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`Player disconnected ${socket.id}`);
+
+    for (const roomName in games) {
+      if (games[roomName].hasPlayer(socket.id)) {
+        const playerName = games[roomName].players[socket.id].name;
+        games[roomName].removePlayer(socket.id);
+        console.log(`Player Leaved ${playerName}`);
+        socket.to(roomName).emit('playerLeaved', playerName);
+        if (games[roomName].isEmpty()) {
+          delete games[roomName];
+        }
+        break;
       }
-    });
-    console.log('playersInRoom:');
-    console.log(playersInRoom);
+    }
   });
 });
 
