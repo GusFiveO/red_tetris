@@ -21,6 +21,9 @@ export class Game {
 
   start() {
     this.started = true;
+    for (const player of Object.values(this.players)) {
+      player.startGameLoop();
+    }
   }
 
   handlePlayerMove(playerId: string, moveType: string) {

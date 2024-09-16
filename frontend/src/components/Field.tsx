@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { updatePlayerField } from '../store/features/playerSlice';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { createRandomMatrix, getColorForNumber } from '../utils/gameUtils';
@@ -12,6 +12,8 @@ export const Field = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    console.log('Field component: ', field);
+
     let lastKeyPressTime = 0;
     const throttleInterval = 200;
 
@@ -35,7 +37,7 @@ export const Field = () => {
           console.log(event.key);
         } else if (event.key === ' ') {
           dispatch(updatePlayerField(createRandomMatrix(ROWS, COLUMNS)));
-          console.log(event.key);
+          console.log(field);
         }
 
         lastKeyPressTime = currentTime;
@@ -47,18 +49,22 @@ export const Field = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [dispatch]);
+  }, [dispatch, field]);
 
-  const fieldComponent = field.map((row, rowIndex) => (
-    <div key={rowIndex} className='flex'>
-      {row.map((elem, colIndex) => (
-        <div
-          key={colIndex}
-          className={`block ${getColorForNumber(elem)}`}
-        ></div>
-      ))}
-    </div>
-  ));
+  const fieldComponent = useMemo(() => {
+    console.log('IN USE MEMO');
+    return field.map((row, rowIndex) => (
+      <div key={rowIndex} className='flex'>
+        {row.map((elem, colIndex) => (
+          <div
+            key={colIndex}
+            className={`block ${getColorForNumber(elem)}`}
+          ></div>
+        ))}
+      </div>
+    ));
+  }, [field]);
+
   return (
     <div>
       <div className='text-center'>SCORE: {score}</div>

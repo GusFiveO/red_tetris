@@ -119,4 +119,20 @@ io.on('connection', (socket: Socket) => {
   });
 });
 
+setInterval(() => {
+  for (const roomId in games) {
+    const game = games[roomId];
+    if (game.isStarted()) {
+      for (const playerId in game.players) {
+        const player = game.players[playerId];
+
+        // Send the full player field to the client
+        io.to(playerId).emit('updateGameState', {
+          field: player.field, // Player's full field (20x10 grid)
+        });
+      }
+    }
+  }
+}, 1000 / 60); // 60 FPS
+
 export { app, io, server };

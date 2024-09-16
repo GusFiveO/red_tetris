@@ -24,6 +24,7 @@ const playerSlice = createSlice({
       state: PlayerState,
       action: PayloadAction<number[][]>
     ) => {
+      console.log('reducer', action.payload);
       state.field = action.payload;
     },
   },
