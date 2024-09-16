@@ -47,21 +47,59 @@ io.on('connection', (socket: Socket) => {
       console.log(`joinRoom: ${roomName}`);
       games[roomName] = new Game(roomName);
     }
+    const game = games[roomName];
+    console.log(
+      `game ${roomName} is started ? : ${game.isStarted()}, ${
+        game.players[socket.id]?.name
+      }`
+    );
+    if (game.isStarted()) {
+      socket.emit(
+        'gameAlreadyStarted',
+        'The game has already started, you cannot join.'
+      );
+      return;
+    }
 
-    const allOponents = games[roomName]
-      .getAllOponents(socket.id)
-      .map((player) => {
-        return { id: player.id, name: player.name, firstLine: 0 };
-      });
+    const allOponents = game.getAllOponents(socket.id).map((player) => {
+      return { id: player.id, name: player.name, firstLine: 0 };
+    });
     console.log('allPlayers: ', allOponents);
     socket.emit('currentPlayers', allOponents);
 
-    const newPlayer = games[roomName].addPlayer(socket.id, playerName);
+    const newPlayer = game.addPlayer(socket.id, playerName);
 
-    socket.to(roomName).emit('playerJoined', newPlayer);
+    if (newPlayer) {
+      socket.to(roomName).emit('playerJoined', {
+        id: newPlayer?.id,
+        name: newPlayer?.name,
+        firstLine: 0,
+      });
+    }
 
     socket.join(roomName);
   });
+
+  socket.on('startGame', (roomName: string) => {
+    const game = games[roomName];
+
+    if (game) {
+      game.start();
+    }
+    console.log(`Game ${roomName} started`);
+  });
+
+  socket.on(
+    'playerMove',
+    (moveData: { roomName: string; moveType: string }) => {
+      const { roomName, moveType } = moveData;
+      const game = games[roomName];
+
+      if (game) {
+        game.handlePlayerMove(socket.id, moveType);
+      }
+    }
+  );
 
   socket.on('disconnect', () => {
     console.log(`Player disconnected ${socket.id}`);

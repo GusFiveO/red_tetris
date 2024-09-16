@@ -51,6 +51,7 @@ const opponentsSlice = createSlice({
       state: OpponentState[],
       action: PayloadAction<OpponentState>
     ) => {
+      if (!action.payload) return;
       const player = state.find((elem) => elem.id == action.payload.id);
       if (!player) state.push(action.payload); // check if the player is already present
     },

@@ -46,15 +46,27 @@ export const Game = () => {
       dispatch(removeOpponent(playerName));
     }
 
+    function onGameAlreadyStarted(message: string) {
+      console.log(message);
+      alert(message);
+    }
+
     socket.on('currentPlayers', onCurrentPlayers);
     socket.on('playerLeaved', onPlayerLeaved);
     socket.on('playerJoined', onPlayerJoined);
+    socket.on('gameAlreadyStarted', onGameAlreadyStarted);
     return () => {
       socket.off('currentPlayers', onCurrentPlayers);
       socket.off('playerLeaved', onPlayerLeaved);
       socket.off('playerJoined', onPlayerJoined);
+      socket.off('gameAlreadyStarted', onGameAlreadyStarted);
     };
   }, [dispatch]);
+
+  function startGame(roomName: string | undefined) {
+    socket.emit('startGame', roomName);
+    console.log('game started');
+  }
 
   console.log(room, playerName);
 
@@ -69,6 +81,7 @@ export const Game = () => {
           <Button>yes</Button>
         </ModalButton>
       </div>
+      <Button onClick={() => startGame(room)}>start</Button>
       <Field />
       <Spectrum />
     </div>

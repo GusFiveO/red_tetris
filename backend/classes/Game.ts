@@ -7,10 +7,24 @@ interface Players {
 export class Game {
   roomName: string;
   players: Players;
+  started: boolean;
 
   constructor(roomName: string) {
     this.roomName = roomName;
     this.players = {};
+    this.started = false;
+  }
+
+  isStarted() {
+    return this.started;
+  }
+
+  start() {
+    this.started = true;
+  }
+
+  handlePlayerMove(playerId: string, moveType: string) {
+    return;
   }
 
   hasPlayer(playerId: string) {
@@ -21,7 +35,7 @@ export class Game {
     if (!this.players[playerId]) {
       this.players[playerId] = new Player(playerId, playerName);
       console.log(`Player ${playerName} join the game ${this.roomName}`);
-      return { id: playerId, name: playerName, firstLine: 0 };
+      return this.players[playerId];
     }
   }
 
