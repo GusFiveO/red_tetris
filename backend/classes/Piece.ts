@@ -13,4 +13,14 @@ export class Piece {
     this.position.x += offsetX;
     this.position.y += offsetY;
   }
+
+  rotate() {
+    this.matrix = this.rotateMatrix(this.matrix);
+  }
+
+  rotateMatrix(matrix: Matrix): Matrix {
+    return matrix[0].map((_, index) =>
+      matrix.map((row) => row[index]).reverse()
+    );
+  }
 }

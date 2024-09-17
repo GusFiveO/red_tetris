@@ -65,6 +65,16 @@ export class Player {
     }
   }
 
+  rotatePiece() {
+    this.currentPiece.rotate();
+
+    if (this.collides()) {
+      this.currentPiece.rotate();
+      this.currentPiece.rotate();
+      this.currentPiece.rotate();
+    }
+  }
+
   dropPiece() {
     this.currentPiece.move(0, 1);
 

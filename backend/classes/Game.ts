@@ -44,6 +44,9 @@ export class Game {
       if (moveType == 'drop') {
         player.dropPiece();
       }
+      if (moveType == 'rotate') {
+        player.rotatePiece();
+      }
     }
   }
 
