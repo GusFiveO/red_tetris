@@ -36,7 +36,15 @@ export class Game {
   }
 
   handlePlayerMove(playerId: string, moveType: string) {
-    return;
+    const player = this.players[playerId];
+    if (player) {
+      if (moveType == 'left' || moveType == 'right') {
+        player.movePiece(moveType);
+      }
+      if (moveType == 'drop') {
+        player.dropPiece();
+      }
+    }
   }
 
   hasPlayer(playerId: string) {

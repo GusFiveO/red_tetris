@@ -96,7 +96,7 @@ io.on('connection', (socket: Socket) => {
       console.log(player.name, newState);
       player.ready = newState;
       io.to(roomName).emit('playerReady', {
-        playerName: player.name,
+        playerId: socket.id,
         state: newState,
       });
     }
@@ -114,14 +114,30 @@ io.on('connection', (socket: Socket) => {
     }
   );
 
+  socket.on('leaveRoom', () => {
+    console.log(`Player disconnected ${socket.id}`);
+
+    for (const roomName in games) {
+      if (games[roomName].hasPlayer(socket.id)) {
+        // const playerName = games[roomName].players[socket.id].name;
+        games[roomName].removePlayer(socket.id);
+        socket.to(roomName).emit('playerLeaved', socket.id);
+        if (games[roomName].isEmpty()) {
+          delete games[roomName];
+        }
+        break;
+      }
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log(`Player disconnected ${socket.id}`);
 
     for (const roomName in games) {
       if (games[roomName].hasPlayer(socket.id)) {
-        const playerName = games[roomName].players[socket.id].name;
+        // const playerName = games[roomName].players[socket.id].name;
         games[roomName].removePlayer(socket.id);
-        socket.to(roomName).emit('playerLeaved', playerName);
+        socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
           delete games[roomName];
         }
@@ -141,10 +157,10 @@ setInterval(() => {
     } else {
       for (const playerId in game.players) {
         const player = game.players[playerId];
-
+        const field = player.getMergedField();
         // Send the full player field to the client
         io.to(playerId).emit('updateGameState', {
-          field: player.field, // Player's full field (20x10 grid)
+          field: field, // Player's full field (20x10 grid)
         });
       }
     }

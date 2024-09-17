@@ -1,3 +1,33 @@
+export type Matrix = number[][];
+
+export const TETROMINOS: { [key: string]: Matrix } = {
+  I: [[1, 1, 1, 1]],
+  O: [
+    [2, 2],
+    [2, 2],
+  ],
+  T: [
+    [0, 3, 0],
+    [3, 3, 3],
+  ],
+  L: [
+    [0, 0, 4],
+    [4, 4, 4],
+  ],
+  J: [
+    [5, 0, 0],
+    [5, 5, 5],
+  ],
+  S: [
+    [0, 6, 6],
+    [6, 6, 0],
+  ],
+  Z: [
+    [7, 7, 0],
+    [0, 7, 7],
+  ],
+};
+
 export function createRandomMatrix(
   numRows: number,
   numCols: number

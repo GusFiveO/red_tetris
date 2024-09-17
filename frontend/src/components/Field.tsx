@@ -1,4 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { SocketContext } from '../pages/Game';
 import { updatePlayerField } from '../store/features/playerSlice';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { createRandomMatrix, getColorForNumber } from '../utils/gameUtils';
@@ -7,6 +9,8 @@ const COLUMNS = 10;
 const ROWS = 20;
 
 export const Field = () => {
+  const { room, playerName } = useParams();
+  const socket = useContext(SocketContext);
   const field = useAppSelector((state: RootState) => state.player.field);
   const score = useAppSelector((state: RootState) => state.player.score);
   const dispatch = useAppDispatch();
@@ -29,12 +33,16 @@ export const Field = () => {
       if (currentTime - lastKeyPressTime > throttleInterval) {
         if (event.key === 'ArrowUp') {
           console.log(event.key);
+          socket.emit('playerMove', { roomName: room, moveType: 'rotate' });
         } else if (event.key === 'ArrowDown') {
           console.log(event.key);
+          socket.emit('playerMove', { roomName: room, moveType: 'drop' });
         } else if (event.key === 'ArrowLeft') {
           console.log(event.key);
+          socket.emit('playerMove', { roomName: room, moveType: 'left' });
         } else if (event.key === 'ArrowRight') {
           console.log(event.key);
+          socket.emit('playerMove', { roomName: room, moveType: 'right' });
         } else if (event.key === ' ') {
           dispatch(updatePlayerField(createRandomMatrix(ROWS, COLUMNS)));
           console.log(field);

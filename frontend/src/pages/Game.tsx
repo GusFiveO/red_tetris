@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Button } from '../components/Button';
@@ -11,7 +11,8 @@ import { useAppDispatch } from '../store/store';
 import '../styles/custom-utilities.css';
 import { Player } from '../types';
 
-const socket = io('localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL);
+export const SocketContext = React.createContext(socket);
 
 export type PlayerSpectrum = {
   name: string;
@@ -45,9 +46,9 @@ export const Game = () => {
       dispatch(addOpponent(player));
     }
 
-    function onPlayerLeaved(playerName: string) {
-      console.log('playerLeaved: ', playerName);
-      dispatch(removeOpponent(playerName));
+    function onPlayerLeaved(playerId: string) {
+      console.log('playerLeaved: ', playerId);
+      dispatch(removeOpponent(playerId));
     }
 
     function onGameAlreadyStarted(message: string) {
@@ -75,6 +76,11 @@ export const Game = () => {
     };
   }, [dispatch]);
 
+  function leaveRoom() {
+    socket.emit('leaveRoom');
+    navigate('/');
+  }
+
   function changeReadyState(roomName: string | undefined, newState: boolean) {
     socket.emit('playerReady', { roomName, newState });
     setIsReady(newState);
@@ -91,13 +97,15 @@ export const Game = () => {
       <div className='fixed right-px top-px'>
         <ModalButton buttonText='QUIT'>
           <div>Leave Game ?</div>
-          <Button onClick={() => navigate('/')}>yes</Button>
+          <Button onClick={leaveRoom}>yes</Button>
         </ModalButton>
       </div>
       <Button onClick={() => changeReadyState(room, !isReady)}>
         {isReady ? 'no more ready ?' : 'ready ?'}
       </Button>
-      <Field />
+      <SocketContext.Provider value={socket}>
+        <Field />
+      </SocketContext.Provider>
       <Spectrum />
     </div>
   );

@@ -57,7 +57,7 @@ const opponentsSlice = createSlice({
     },
     removeOpponent: (state: OpponentState[], action: PayloadAction<string>) => {
       const index = state.findIndex((opponent: OpponentState) => {
-        return opponent.name == action.payload;
+        return opponent.id == action.payload;
       });
       if (index > -1) {
         state.splice(index, 1);
