@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Button } from '../components/Button';
@@ -26,13 +26,14 @@ export type ScoreInfo = {
 
 export const Game = () => {
   const { room, playerName } = useParams();
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  socket.emit('joinRoom', room, playerName);
-
   useEffect(() => {
+    socket.emit('joinRoom', room, playerName);
+
     console.log('Use effect');
     function onCurrentPlayers(players: Player[]) {
       console.log('currentPlayers: ', players);
@@ -74,9 +75,10 @@ export const Game = () => {
     };
   }, [dispatch]);
 
-  function startGame(roomName: string | undefined) {
-    socket.emit('startGame', roomName);
-    console.log('game started');
+  function changeReadyState(roomName: string | undefined, newState: boolean) {
+    socket.emit('playerReady', { roomName, newState });
+    setIsReady(newState);
+    console.log(`player ${newState ? 'not ready' : 'ready'}`);
   }
 
   console.log(room, playerName);
@@ -92,7 +94,9 @@ export const Game = () => {
           <Button onClick={() => navigate('/')}>yes</Button>
         </ModalButton>
       </div>
-      <Button onClick={() => startGame(room)}>start</Button>
+      <Button onClick={() => changeReadyState(room, !isReady)}>
+        {isReady ? 'no more ready ?' : 'ready ?'}
+      </Button>
       <Field />
       <Spectrum />
     </div>

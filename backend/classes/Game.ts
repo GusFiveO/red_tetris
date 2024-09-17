@@ -26,6 +26,15 @@ export class Game {
     }
   }
 
+  areAllPlayersReady() {
+    for (const player of Object.values(this.players)) {
+      if (!player.isReady()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   handlePlayerMove(playerId: string, moveType: string) {
     return;
   }
@@ -62,6 +71,4 @@ export class Game {
       (player) => player.id != playerId
     );
   }
-
-  broadcast(event: string, payload: any) {}
 }

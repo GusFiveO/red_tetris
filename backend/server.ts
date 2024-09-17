@@ -47,12 +47,8 @@ io.on('connection', (socket: Socket) => {
       console.log(`joinRoom: ${roomName}`);
       games[roomName] = new Game(roomName);
     }
+
     const game = games[roomName];
-    console.log(
-      `game ${roomName} is started ? : ${game.isStarted()}, ${
-        game.players[socket.id]?.name
-      }`
-    );
     if (game.isStarted()) {
       socket.emit(
         'gameAlreadyStarted',
@@ -64,7 +60,6 @@ io.on('connection', (socket: Socket) => {
     const allOponents = game.getAllOponents(socket.id).map((player) => {
       return { id: player.id, name: player.name, firstLine: 0 };
     });
-    console.log('allPlayers: ', allOponents);
     socket.emit('currentPlayers', allOponents);
 
     const newPlayer = game.addPlayer(socket.id, playerName);
@@ -90,6 +85,24 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on(
+    'playerReady',
+    (payload: { roomName: string; newState: boolean }) => {
+      const { roomName, newState } = payload;
+      if (!games[roomName]) {
+        return;
+      }
+      const game = games[roomName];
+      const player = game.players[socket.id];
+      console.log(player.name, newState);
+      player.ready = newState;
+      io.to(roomName).emit('playerReady', {
+        playerName: player.name,
+        state: newState,
+      });
+    }
+  );
+
+  socket.on(
     'playerMove',
     (moveData: { roomName: string; moveType: string }) => {
       const { roomName, moveType } = moveData;
@@ -108,7 +121,6 @@ io.on('connection', (socket: Socket) => {
       if (games[roomName].hasPlayer(socket.id)) {
         const playerName = games[roomName].players[socket.id].name;
         games[roomName].removePlayer(socket.id);
-        console.log(`Player Leaved ${playerName}`);
         socket.to(roomName).emit('playerLeaved', playerName);
         if (games[roomName].isEmpty()) {
           delete games[roomName];
@@ -122,7 +134,11 @@ io.on('connection', (socket: Socket) => {
 setInterval(() => {
   for (const roomId in games) {
     const game = games[roomId];
-    if (game.isStarted()) {
+    if (!game.isStarted()) {
+      if (game.areAllPlayersReady()) {
+        game.start();
+      }
+    } else {
       for (const playerId in game.players) {
         const player = game.players[playerId];
 

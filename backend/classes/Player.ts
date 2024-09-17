@@ -5,6 +5,7 @@ export class Player {
   name: string;
   score: number;
   field: number[][];
+  ready: boolean;
   pieceDropInterval: number;
   activePiece: number;
   gameInterval: NodeJS.Timeout | null;
@@ -14,6 +15,7 @@ export class Player {
     this.name = name;
     this.field = this.initializeField();
     this.score = 0;
+    this.ready = false;
     this.pieceDropInterval = 1000;
     this.activePiece = this.generateNewPiece();
     this.gameInterval = null;
@@ -23,6 +25,10 @@ export class Player {
     return Array(20)
       .fill(0)
       .map(() => Array(10).fill(0));
+  }
+
+  isReady() {
+    return this.ready;
   }
 
   startGameLoop() {
