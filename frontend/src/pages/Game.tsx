@@ -58,7 +58,6 @@ export const Game = () => {
 
     function onUpdateGameState(payload: { field: number[][] }) {
       const { field } = payload;
-      // console.log(field);
       dispatch(updatePlayerField(field));
     }
 

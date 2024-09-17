@@ -81,6 +81,7 @@ export class Player {
     if (this.collides()) {
       this.currentPiece.move(0, -1);
       this.lockPiece();
+      this.clearCompletedLine();
       this.currentPiece = this.generateNewPiece();
     }
   }
@@ -94,6 +95,17 @@ export class Player {
           this.field[posY + y][posX + x] = this.currentPiece.matrix[y][x];
         }
       }
+    }
+  }
+
+  clearCompletedLine() {
+    const nbRows = this.field.length;
+    this.field = this.field.filter((row) => row.some((cell) => cell === 0));
+
+    const nbDeletedRows = nbRows - this.field.length;
+
+    for (let i = 0; i < nbDeletedRows; i += 1) {
+      this.field.unshift(Array(10).fill(0));
     }
   }
 

@@ -119,7 +119,6 @@ io.on('connection', (socket: Socket) => {
 
     for (const roomName in games) {
       if (games[roomName].hasPlayer(socket.id)) {
-        // const playerName = games[roomName].players[socket.id].name;
         games[roomName].removePlayer(socket.id);
         socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
@@ -135,7 +134,6 @@ io.on('connection', (socket: Socket) => {
 
     for (const roomName in games) {
       if (games[roomName].hasPlayer(socket.id)) {
-        // const playerName = games[roomName].players[socket.id].name;
         games[roomName].removePlayer(socket.id);
         socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
@@ -158,7 +156,7 @@ setInterval(() => {
       for (const playerId in game.players) {
         const player = game.players[playerId];
         const field = player.getMergedField();
-        // Send the full player field to the client
+
         io.to(playerId).emit('updateGameState', {
           field: field, // Player's full field (20x10 grid)
         });

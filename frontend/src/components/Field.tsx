@@ -16,8 +16,6 @@ export const Field = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log('Field component: ', field);
-
     let lastKeyPressTime = 0;
     const throttleInterval = 200;
 
@@ -60,7 +58,6 @@ export const Field = () => {
   }, [dispatch, field]);
 
   const fieldComponent = useMemo(() => {
-    console.log('IN USE MEMO');
     return field.map((row, rowIndex) => (
       <div key={rowIndex} className='flex'>
         {row.map((elem, colIndex) => (
