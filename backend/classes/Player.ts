@@ -1,11 +1,12 @@
 import { EventEmitter } from 'events';
 import { Piece } from './Piece';
-import { TETROMINOS } from './utils';
+import { FRAMES_PER_DROP, TARGET_SECONDS_PER_FRAME, TETROMINOS } from './utils';
 
 export class Player extends EventEmitter {
   id: string;
   name: string;
   score: number;
+  level: number;
   field: number[][];
   ready: boolean;
   gameOver: boolean;
@@ -13,6 +14,7 @@ export class Player extends EventEmitter {
   currentPiece: Piece;
   gameInterval: NodeJS.Timeout | null;
   tetrominoSequence: string[];
+  linesCleared: number;
 
   constructor(id: string, name: string, tetrominoSequence: string[]) {
     super();
@@ -20,6 +22,8 @@ export class Player extends EventEmitter {
     this.name = name;
     this.field = this.initializeField();
     this.score = 0;
+    this.level = 1;
+    this.linesCleared = 0;
     this.ready = false;
     this.gameOver = false;
     this.pieceDropInterval = 1000;
@@ -43,7 +47,7 @@ export class Player extends EventEmitter {
       clearInterval(this.gameInterval);
     }
 
-    const intervalTime = 1000;
+    const intervalTime = this.pieceDropInterval;
 
     this.gameInterval = setInterval(() => {
       this.update();
@@ -53,7 +57,6 @@ export class Player extends EventEmitter {
   }
 
   update() {
-    // this.field = createRandomMatrix(20, 10);
     this.dropPiece();
   }
 
@@ -66,11 +69,6 @@ export class Player extends EventEmitter {
     }
     return new Piece(TETROMINOS['I']); // Default to 'I' if no tetromino available
   }
-  //   const pieceKeys = Object.keys(TETROMINOS);
-  //   const randomPieceKey =
-  //     pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
-  //   return new Piece(TETROMINOS[randomPieceKey]);
-  // }
 
   movePiece(direction: 'left' | 'right') {
     const offsetX = direction == 'right' ? 1 : -1;
@@ -131,11 +129,53 @@ export class Player extends EventEmitter {
     const nbRows = this.field.length;
     this.field = this.field.filter((row) => row.some((cell) => cell === 0));
 
-    const nbDeletedRows = nbRows - this.field.length;
+    const nbDeletedLines = nbRows - this.field.length;
 
-    for (let i = 0; i < nbDeletedRows; i += 1) {
+    for (let i = 0; i < nbDeletedLines; i += 1) {
       this.field.unshift(Array(10).fill(0));
     }
+    this.updateScore(nbDeletedLines);
+    this.linesCleared += nbDeletedLines;
+
+    if (this.linesCleared >= this.level * 10) {
+      this.levelUp();
+    }
+  }
+
+  updateScore(nbDeletedLines: number) {
+    switch (nbDeletedLines) {
+      case 1:
+        this.score += 40 * this.level;
+        break;
+      case 2:
+        this.score += 100 * this.level;
+        break;
+      case 3:
+        this.score += 300 * this.level;
+        break;
+      case 4:
+        this.score += 1200 * this.level;
+        break;
+    }
+    this.emit('updateScore');
+  }
+
+  calculateDropInterval(level: number) {
+    if (level > 29) {
+      level = 29;
+    }
+    return FRAMES_PER_DROP[level] * TARGET_SECONDS_PER_FRAME;
+  }
+
+  levelUp() {
+    this.level += 1;
+
+    this.pieceDropInterval = this.calculateDropInterval(this.level);
+    if (this.gameInterval) {
+      clearInterval(this.gameInterval);
+    }
+
+    this.startGameLoop();
   }
 
   collides() {
@@ -162,8 +202,6 @@ export class Player extends EventEmitter {
   }
 
   hasLost() {
-    const mergedField = this.field.map((row) => [...row]);
-
     const { x: pieceX, y: pieceY } = this.currentPiece.position;
 
     for (let y = 0; y < this.currentPiece.matrix.length; y++) {

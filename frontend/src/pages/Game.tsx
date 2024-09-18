@@ -6,7 +6,10 @@ import { Field } from '../components/Field';
 import ModalButton from '../components/ModalButton';
 import { Spectrum } from '../components/Spectrum';
 import { addOpponent, removeOpponent } from '../store/features/opponentsSlice';
-import { updatePlayerField } from '../store/features/playerSlice';
+import {
+  updatePlayerField,
+  updatePlayerScore,
+} from '../store/features/playerSlice';
 import { useAppDispatch } from '../store/store';
 import '../styles/custom-utilities.css';
 import { Player } from '../types';
@@ -56,10 +59,11 @@ export const Game = () => {
       alert(message);
     }
 
-    function onUpdateGameState(payload: { field: number[][] }) {
-      const { field } = payload;
+    function onUpdateGameState(payload: { field: number[][]; score: number }) {
+      const { field, score } = payload;
       console.log(field);
       dispatch(updatePlayerField(field));
+      dispatch(updatePlayerScore(score));
     }
 
     function onGameOver(payload: { message: string }) {

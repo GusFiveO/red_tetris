@@ -55,9 +55,12 @@ io.on('connection', (socket: Socket) => {
 
       newGame.on(
         'updateGameState',
-        (payload: { playerId: string; field: Matrix }) => {
-          const { playerId, field } = payload;
-          io.to(playerId).emit('updateGameState', { field: field });
+        (payload: { playerId: string; field: Matrix; score: number }) => {
+          const { playerId, field, score } = payload;
+          io.to(playerId).emit('updateGameState', {
+            field: field,
+            score: score,
+          });
         }
       );
       games[roomName] = newGame;

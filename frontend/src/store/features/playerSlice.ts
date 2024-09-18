@@ -9,7 +9,7 @@ interface PlayerState {
 
 const initialState: PlayerState = {
   id: '',
-  score: 200,
+  score: 0,
   field: createMatrix(20, 10),
 };
 

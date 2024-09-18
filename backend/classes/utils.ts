@@ -40,6 +40,13 @@ export const TETROMINOS: { [key: string]: Matrix } = {
   ],
 };
 
+export const FRAMES_PER_DROP = [
+  48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2,
+  2, 2, 2, 2, 2, 2, 1,
+];
+
+export const TARGET_SECONDS_PER_FRAME = 1000 / 60;
+
 export function createRandomMatrix(
   numRows: number,
   numCols: number

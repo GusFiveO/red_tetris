@@ -100,6 +100,7 @@ export class Game extends EventEmitter {
         this.emit('updateGameState', {
           playerId: playerId,
           field: field,
+          score: player.score,
         });
       }
     });
