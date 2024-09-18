@@ -58,7 +58,14 @@ export const Game = () => {
 
     function onUpdateGameState(payload: { field: number[][] }) {
       const { field } = payload;
+      console.log(field);
       dispatch(updatePlayerField(field));
+    }
+
+    function onGameOver(payload: { message: string }) {
+      const { message } = payload;
+      console.log(message);
+      alert(message);
     }
 
     socket.on('currentPlayers', onCurrentPlayers);
@@ -66,12 +73,14 @@ export const Game = () => {
     socket.on('playerJoined', onPlayerJoined);
     socket.on('gameAlreadyStarted', onGameAlreadyStarted);
     socket.on('updateGameState', onUpdateGameState);
+    socket.on('gameOver', onGameOver);
     return () => {
       socket.off('currentPlayers', onCurrentPlayers);
       socket.off('playerLeaved', onPlayerLeaved);
       socket.off('playerJoined', onPlayerJoined);
       socket.off('gameAlreadyStarted', onGameAlreadyStarted);
       socket.off('updateGameState', onUpdateGameState);
+      socket.off('gameOver', onGameOver);
     };
   }, [dispatch]);
 
