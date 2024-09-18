@@ -14,9 +14,9 @@ export const TETROMINOS: { [key: string]: Matrix } = {
     [0, 0, 0, 0],
   ],
   T: [
-    [0, 0, 0],
     [3, 3, 3],
     [0, 3, 0],
+    [0, 0, 0],
   ],
   L: [
     [0, 0, 4],

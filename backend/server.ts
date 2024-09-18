@@ -4,6 +4,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { Game } from './classes/Game';
+import { Matrix } from './classes/utils';
 import { playerScoreRouter } from './routes/playerScore';
 
 const app = express();
@@ -45,7 +46,21 @@ io.on('connection', (socket: Socket) => {
   socket.on('joinRoom', (roomName: string, playerName: string) => {
     if (!games[roomName]) {
       console.log(`joinRoom: ${roomName}`);
-      games[roomName] = new Game(roomName);
+      const newGame = new Game(roomName);
+
+      newGame.on('gameOver', (playerId: string) => {
+        console.log('Game Over');
+        io.to(playerId).emit('gameOver', { message: 'You lost!' });
+      });
+
+      newGame.on(
+        'updateGameState',
+        (payload: { playerId: string; field: Matrix }) => {
+          const { playerId, field } = payload;
+          io.to(playerId).emit('updateGameState', { field: field });
+        }
+      );
+      games[roomName] = newGame;
     }
 
     const game = games[roomName];
@@ -93,12 +108,16 @@ io.on('connection', (socket: Socket) => {
       }
       const game = games[roomName];
       const player = game.players[socket.id];
-      console.log(player.name, newState);
+      // console.log(player.name, newState);
       player.ready = newState;
       io.to(roomName).emit('playerReady', {
         playerId: socket.id,
         state: newState,
       });
+      console.log('allplayer are ready ?:', game.areAllPlayersReady());
+      if (game.areAllPlayersReady()) {
+        game.start();
+      }
     }
   );
 
@@ -144,25 +163,5 @@ io.on('connection', (socket: Socket) => {
     }
   });
 });
-
-setInterval(() => {
-  for (const roomId in games) {
-    const game = games[roomId];
-    if (!game.isStarted()) {
-      if (game.areAllPlayersReady()) {
-        game.start();
-      }
-    } else {
-      for (const playerId in game.players) {
-        const player = game.players[playerId];
-        const field = player.getMergedField();
-
-        io.to(playerId).emit('updateGameState', {
-          field: field, // Player's full field (20x10 grid)
-        });
-      }
-    }
-  }
-}, 1000 / 60); // 60 FPS
 
 export { app, io, server };

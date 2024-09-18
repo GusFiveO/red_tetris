@@ -1,23 +1,29 @@
+import { EventEmitter } from 'events';
 import { Piece } from './Piece';
 import { TETROMINOS } from './utils';
 
-export class Player {
+export class Player extends EventEmitter {
   id: string;
   name: string;
   score: number;
   field: number[][];
   ready: boolean;
+  gameOver: boolean;
   pieceDropInterval: number;
   currentPiece: Piece;
   gameInterval: NodeJS.Timeout | null;
+  tetrominoSequence: string[];
 
-  constructor(id: string, name: string) {
+  constructor(id: string, name: string, tetrominoSequence: string[]) {
+    super();
     this.id = id;
     this.name = name;
     this.field = this.initializeField();
     this.score = 0;
     this.ready = false;
+    this.gameOver = false;
     this.pieceDropInterval = 1000;
+    this.tetrominoSequence = tetrominoSequence;
     this.currentPiece = this.generateNewPiece();
     this.gameInterval = null;
   }
@@ -41,6 +47,8 @@ export class Player {
 
     this.gameInterval = setInterval(() => {
       this.update();
+
+      this.emit('updateGameState');
     }, intervalTime);
   }
 
@@ -50,11 +58,19 @@ export class Player {
   }
 
   generateNewPiece() {
-    const pieceKeys = Object.keys(TETROMINOS);
-    const randomPieceKey =
-      pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
-    return new Piece(TETROMINOS[randomPieceKey]);
+    const tetromino = this.tetrominoSequence.shift(); // Get and remove the first item
+    if (tetromino) {
+      this.tetrominoSequence.push(tetromino); // Optionally put it back for future use
+      const newPiece = new Piece(TETROMINOS[tetromino]);
+      return newPiece;
+    }
+    return new Piece(TETROMINOS['I']); // Default to 'I' if no tetromino available
   }
+  //   const pieceKeys = Object.keys(TETROMINOS);
+  //   const randomPieceKey =
+  //     pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
+  //   return new Piece(TETROMINOS[randomPieceKey]);
+  // }
 
   movePiece(direction: 'left' | 'right') {
     const offsetX = direction == 'right' ? 1 : -1;
@@ -63,6 +79,8 @@ export class Player {
     if (this.collides()) {
       this.currentPiece.move(-offsetX, 0);
     }
+
+    this.emit('updateGameState');
   }
 
   rotatePiece() {
@@ -73,9 +91,14 @@ export class Player {
       this.currentPiece.rotate();
       this.currentPiece.rotate();
     }
+
+    this.emit('updateGameState');
   }
 
   dropPiece() {
+    if (this.gameOver) {
+      return;
+    }
     this.currentPiece.move(0, 1);
 
     if (this.collides()) {
@@ -83,7 +106,13 @@ export class Player {
       this.lockPiece();
       this.clearCompletedLine();
       this.currentPiece = this.generateNewPiece();
+      if (this.hasLost()) {
+        this.gameOver = true;
+        this.emit('gameOver');
+      }
     }
+
+    this.emit('updateGameState');
   }
 
   private lockPiece() {
@@ -124,6 +153,26 @@ export class Player {
             fieldY > this.field.length ||
             this.field[fieldY]?.[fieldX] != 0
           ) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  hasLost() {
+    const mergedField = this.field.map((row) => [...row]);
+
+    const { x: pieceX, y: pieceY } = this.currentPiece.position;
+
+    for (let y = 0; y < this.currentPiece.matrix.length; y++) {
+      for (let x = 0; x < this.currentPiece.matrix[y].length; x++) {
+        if (this.currentPiece.matrix[y][x] !== 0) {
+          const fieldX = pieceX + x;
+          const fieldY = pieceY + y;
+
+          if (fieldY >= 0 && this.field[fieldY][fieldX] !== 0) {
             return true;
           }
         }

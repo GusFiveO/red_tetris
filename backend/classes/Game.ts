@@ -1,18 +1,36 @@
+import { EventEmitter } from 'events';
 import { Player } from './Player';
+import { TETROMINOS } from './utils';
 
 interface Players {
   [playerId: string]: Player;
 }
 
-export class Game {
+export class Game extends EventEmitter {
   roomName: string;
   players: Players;
   started: boolean;
+  tetrominoSequence: string[];
 
   constructor(roomName: string) {
+    super();
     this.roomName = roomName;
     this.players = {};
     this.started = false;
+    this.tetrominoSequence = this.generateTetrominoSequence();
+  }
+
+  generateTetrominoSequence(): string[] {
+    const sequence = [];
+    const pieceKeys = Object.keys(TETROMINOS);
+
+    for (let i = 0; i < 1000; i++) {
+      // Generating a long sequence
+      const randomPieceKey =
+        pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
+      sequence.push(randomPieceKey);
+    }
+    return sequence;
   }
 
   isStarted() {
@@ -37,7 +55,7 @@ export class Game {
 
   handlePlayerMove(playerId: string, moveType: string) {
     const player = this.players[playerId];
-    if (player) {
+    if (player && !player.gameOver) {
       if (moveType == 'left' || moveType == 'right') {
         player.movePiece(moveType);
       }
@@ -56,10 +74,35 @@ export class Game {
 
   addPlayer(playerId: string, playerName: string) {
     if (!this.players[playerId]) {
-      this.players[playerId] = new Player(playerId, playerName);
+      const newPlayer = new Player(playerId, playerName, [
+        ...this.tetrominoSequence,
+      ]);
+
+      this.playerEventHandler(newPlayer);
+
       console.log(`Player ${playerName} join the game ${this.roomName}`);
+      this.players[playerId] = newPlayer;
       return this.players[playerId];
     }
+  }
+
+  playerEventHandler(newPlayer: Player) {
+    const playerId = newPlayer.id;
+
+    newPlayer.on('gameOver', () => {
+      this.emit('gameOver', playerId);
+    });
+
+    newPlayer.on('updateGameState', () => {
+      const player = this.players[playerId];
+      if (player) {
+        const field = player.getMergedField();
+        this.emit('updateGameState', {
+          playerId: playerId,
+          field: field,
+        });
+      }
+    });
   }
 
   removePlayer(playerId: string) {
