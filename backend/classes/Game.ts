@@ -104,6 +104,21 @@ export class Game extends EventEmitter {
         });
       }
     });
+
+    newPlayer.on('linesDeleted', (payload: { nbLines: number }) => {
+      const malusLines = payload.nbLines - 1;
+      if (malusLines) {
+        this.addUndestructibleLines(newPlayer.id, malusLines);
+      }
+    });
+  }
+
+  addUndestructibleLines(playerExceptionId: string, nbLines: number) {
+    for (const player of Object.values(this.players)) {
+      if (player.id != playerExceptionId) {
+        player.addUndestructibleLine(nbLines);
+      }
+    }
   }
 
   removePlayer(playerId: string) {

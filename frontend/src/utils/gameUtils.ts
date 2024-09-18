@@ -40,6 +40,8 @@ export const getColorForNumber = (num: number): string => {
       return 'bg-purple-500 shadow-inner shadow-slate-300';
     case 7: // Red (Z)
       return 'bg-red-500 shadow-inner shadow-slate-300';
+    case -1: // Red (Z)
+      return 'bg-black-500 shadow-inner shadow-slate-300';
     default:
       // return 'bg-white'; // Default color for unknown cells
       return 'bg-gray-800';

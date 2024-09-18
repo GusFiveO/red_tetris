@@ -127,9 +127,13 @@ export class Player extends EventEmitter {
 
   clearCompletedLine() {
     const nbRows = this.field.length;
-    this.field = this.field.filter((row) => row.some((cell) => cell === 0));
+    this.field = this.field.filter((row) =>
+      row.some((cell) => cell === 0 || cell === -1)
+    );
 
     const nbDeletedLines = nbRows - this.field.length;
+
+    this.emit('linesDeleted', { nbLines: nbDeletedLines });
 
     for (let i = 0; i < nbDeletedLines; i += 1) {
       this.field.unshift(Array(10).fill(0));
@@ -139,6 +143,13 @@ export class Player extends EventEmitter {
 
     if (this.linesCleared >= this.level * 10) {
       this.levelUp();
+    }
+  }
+
+  addUndestructibleLine(nbLines: number) {
+    for (let i = 0; i < nbLines; i += 1) {
+      this.field.shift();
+      this.field.push(Array(10).fill(-1));
     }
   }
 
@@ -191,7 +202,8 @@ export class Player extends EventEmitter {
             fieldX < 0 ||
             fieldX > this.field[0].length ||
             fieldY > this.field.length ||
-            this.field[fieldY]?.[fieldX] != 0
+            this.field[fieldY]?.[fieldX] != 0 ||
+            this.field[fieldY]?.[fieldX] < 0
           ) {
             return true;
           }
