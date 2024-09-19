@@ -128,7 +128,6 @@ export class Game extends EventEmitter {
     const inGamePlayers = Object.values(this.players).filter(
       (player) => !player.gameOver
     );
-    console.log(inGamePlayers);
     if (inGamePlayers.length === 1) {
       return inGamePlayers[0];
     }

@@ -16,7 +16,7 @@ export class Player extends EventEmitter {
   tetrominoSequence: string[];
   linesCleared: number;
   firstLine: number;
-  pendingPenlity: number;
+  pendingPenlity: number[];
 
   constructor(id: string, name: string, tetrominoSequence: string[]) {
     super();
@@ -33,7 +33,7 @@ export class Player extends EventEmitter {
     this.currentPiece = this.generateNewPiece();
     this.gameInterval = null;
     this.firstLine = 0;
-    this.pendingPenlity = 0;
+    this.pendingPenlity = [];
   }
 
   initializeField() {
@@ -54,7 +54,7 @@ export class Player extends EventEmitter {
     this.gameInterval = setInterval(() => {
       this.update();
 
-      this.emit('updateGameState');
+      // this.emit('updateGameState');
     }, intervalTime);
   }
 
@@ -111,9 +111,15 @@ export class Player extends EventEmitter {
       this.currentPiece.move(0, -1);
       this.lockPiece();
       this.clearCompletedLine();
-      if (this.pendingPenlity) {
-        this.addUndestructibleLine(this.pendingPenlity);
-        this.pendingPenlity = 0;
+      // if (this.pendingPenlity) {
+      //   this.addUndestructibleLine(this.pendingPenlity);
+      //   this.pendingPenlity = 0;
+      // }
+      while (this.pendingPenlity.length !== 0) {
+        const penality = this.pendingPenlity.pop();
+        if (penality) {
+          this.addUndestructibleLine(penality);
+        }
       }
       this.currentPiece = this.generateNewPiece();
       if (this.hasLost()) {
@@ -131,11 +137,9 @@ export class Player extends EventEmitter {
   }
 
   computeFirstLine() {
-    console.log(this.field);
     const firstLine = this.field.findIndex((row) =>
       row.some((cell) => cell !== 0)
     );
-    console.log('firstLine:', this.field.length - firstLine);
     return this.field.length - firstLine;
   }
 
@@ -159,7 +163,9 @@ export class Player extends EventEmitter {
 
     const nbDeletedLines = nbRows - this.field.length;
 
-    this.emit('linesDeleted', { nbLines: nbDeletedLines });
+    if (nbDeletedLines > 1) {
+      this.emit('linesDeleted', { nbLines: nbDeletedLines });
+    }
 
     for (let i = 0; i < nbDeletedLines; i += 1) {
       this.field.unshift(Array(10).fill(0));
@@ -173,7 +179,8 @@ export class Player extends EventEmitter {
   }
 
   addPendingPenality(nbLines: number) {
-    this.pendingPenlity = nbLines;
+    console.log('PENALITY LINES:', nbLines);
+    this.pendingPenlity.push(nbLines);
   }
 
   addUndestructibleLine(nbLines: number) {
