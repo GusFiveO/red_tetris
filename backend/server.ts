@@ -63,6 +63,21 @@ io.on('connection', (socket: Socket) => {
           });
         }
       );
+
+      newGame.on(
+        'updateFirstLine',
+        (payload: { playerId: string; firstLine: number }) => {
+          const { playerId, firstLine } = payload;
+          io.to(roomName).except(playerId).emit('updateFirstLine', {
+            playerId: playerId,
+            firstLine: firstLine,
+          });
+        }
+      );
+
+      newGame.on('gameWinner', (playerId: string) => {
+        io.to(playerId).emit('gameWin', { message: 'You win!' });
+      });
       games[roomName] = newGame;
     }
 
@@ -111,7 +126,7 @@ io.on('connection', (socket: Socket) => {
       }
       const game = games[roomName];
       const player = game.players[socket.id];
-      // console.log(player.name, newState);
+
       player.ready = newState;
       io.to(roomName).emit('playerReady', {
         playerId: socket.id,

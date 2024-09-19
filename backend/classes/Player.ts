@@ -15,6 +15,8 @@ export class Player extends EventEmitter {
   gameInterval: NodeJS.Timeout | null;
   tetrominoSequence: string[];
   linesCleared: number;
+  firstLine: number;
+  pendingPenlity: number;
 
   constructor(id: string, name: string, tetrominoSequence: string[]) {
     super();
@@ -30,6 +32,8 @@ export class Player extends EventEmitter {
     this.tetrominoSequence = tetrominoSequence;
     this.currentPiece = this.generateNewPiece();
     this.gameInterval = null;
+    this.firstLine = 0;
+    this.pendingPenlity = 0;
   }
 
   initializeField() {
@@ -43,9 +47,7 @@ export class Player extends EventEmitter {
   }
 
   startGameLoop() {
-    if (this.gameInterval) {
-      clearInterval(this.gameInterval);
-    }
+    this.stopGameLoop();
 
     const intervalTime = this.pieceDropInterval;
 
@@ -56,18 +58,24 @@ export class Player extends EventEmitter {
     }, intervalTime);
   }
 
+  stopGameLoop() {
+    if (this.gameInterval) {
+      clearInterval(this.gameInterval);
+    }
+  }
+
   update() {
     this.dropPiece();
   }
 
   generateNewPiece() {
-    const tetromino = this.tetrominoSequence.shift(); // Get and remove the first item
+    const tetromino = this.tetrominoSequence.shift();
     if (tetromino) {
-      this.tetrominoSequence.push(tetromino); // Optionally put it back for future use
+      this.tetrominoSequence.push(tetromino);
       const newPiece = new Piece(TETROMINOS[tetromino]);
       return newPiece;
     }
-    return new Piece(TETROMINOS['I']); // Default to 'I' if no tetromino available
+    return new Piece(TETROMINOS['I']);
   }
 
   movePiece(direction: 'left' | 'right') {
@@ -103,14 +111,32 @@ export class Player extends EventEmitter {
       this.currentPiece.move(0, -1);
       this.lockPiece();
       this.clearCompletedLine();
+      if (this.pendingPenlity) {
+        this.addUndestructibleLine(this.pendingPenlity);
+        this.pendingPenlity = 0;
+      }
       this.currentPiece = this.generateNewPiece();
       if (this.hasLost()) {
         this.gameOver = true;
         this.emit('gameOver');
       }
+      const firstLine = this.computeFirstLine();
+      if (this.firstLine != firstLine) {
+        this.firstLine = firstLine;
+        this.emit('updateFirstLine');
+      }
     }
 
     this.emit('updateGameState');
+  }
+
+  computeFirstLine() {
+    console.log(this.field);
+    const firstLine = this.field.findIndex((row) =>
+      row.some((cell) => cell !== 0)
+    );
+    console.log('firstLine:', this.field.length - firstLine);
+    return this.field.length - firstLine;
   }
 
   private lockPiece() {
@@ -144,6 +170,10 @@ export class Player extends EventEmitter {
     if (this.linesCleared >= this.level * 10) {
       this.levelUp();
     }
+  }
+
+  addPendingPenality(nbLines: number) {
+    this.pendingPenlity = nbLines;
   }
 
   addUndestructibleLine(nbLines: number) {

@@ -65,9 +65,10 @@ const opponentsSlice = createSlice({
     },
     updateOpponentFirstLine: (
       state: OpponentState[],
-      action: PayloadAction<{ index: number; firstLine: number }>
+      action: PayloadAction<{ playerId: string; firstLine: number }>
     ) => {
-      const { index, firstLine } = action.payload;
+      const { playerId, firstLine } = action.payload;
+      const index = state.findIndex((elem) => elem.id === playerId);
       state[index] = { ...state[index], firstLine };
     },
   },

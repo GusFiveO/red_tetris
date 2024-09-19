@@ -25,7 +25,6 @@ export class Game extends EventEmitter {
     const pieceKeys = Object.keys(TETROMINOS);
 
     for (let i = 0; i < 1000; i++) {
-      // Generating a long sequence
       const randomPieceKey =
         pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
       sequence.push(randomPieceKey);
@@ -91,6 +90,11 @@ export class Game extends EventEmitter {
 
     newPlayer.on('gameOver', () => {
       this.emit('gameOver', playerId);
+      const winner = this.getWinner();
+      if (winner) {
+        winner.stopGameLoop();
+        this.emit('gameWinner', winner.id);
+      }
     });
 
     newPlayer.on('updateGameState', () => {
@@ -111,12 +115,30 @@ export class Game extends EventEmitter {
         this.applyPenalities(newPlayer.id, penalityLines);
       }
     });
+
+    newPlayer.on('updateFirstLine', () => {
+      this.emit('updateFirstLine', {
+        playerId: newPlayer.id,
+        firstLine: newPlayer.firstLine,
+      });
+    });
+  }
+
+  getWinner() {
+    const inGamePlayers = Object.values(this.players).filter(
+      (player) => !player.gameOver
+    );
+    console.log(inGamePlayers);
+    if (inGamePlayers.length === 1) {
+      return inGamePlayers[0];
+    }
+    return null;
   }
 
   applyPenalities(playerExceptionId: string, nbLines: number) {
     for (const player of Object.values(this.players)) {
       if (player.id != playerExceptionId) {
-        player.addUndestructibleLine(nbLines);
+        player.addPendingPenality(nbLines);
       }
     }
   }

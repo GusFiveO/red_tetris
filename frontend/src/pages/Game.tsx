@@ -5,7 +5,11 @@ import { Button } from '../components/Button';
 import { Field } from '../components/Field';
 import ModalButton from '../components/ModalButton';
 import { Spectrum } from '../components/Spectrum';
-import { addOpponent, removeOpponent } from '../store/features/opponentsSlice';
+import {
+  addOpponent,
+  removeOpponent,
+  updateOpponentFirstLine,
+} from '../store/features/opponentsSlice';
 import {
   updatePlayerField,
   updatePlayerScore,
@@ -55,7 +59,6 @@ export const Game = () => {
     }
 
     function onGameAlreadyStarted(message: string) {
-      console.log(message);
       alert(message);
     }
 
@@ -66,9 +69,24 @@ export const Game = () => {
       dispatch(updatePlayerScore(score));
     }
 
+    function onUpdateFirstLine(payload: {
+      playerId: string;
+      firstLine: number;
+    }) {
+      const { playerId, firstLine } = payload;
+      console.log('updateFirstLine:', playerId, firstLine);
+      dispatch(
+        updateOpponentFirstLine({ playerId: playerId, firstLine: firstLine })
+      );
+    }
+
     function onGameOver(payload: { message: string }) {
       const { message } = payload;
-      console.log(message);
+      alert(message);
+    }
+
+    function onGameWin(payload: { message: string }) {
+      const { message } = payload;
       alert(message);
     }
 
@@ -77,14 +95,18 @@ export const Game = () => {
     socket.on('playerJoined', onPlayerJoined);
     socket.on('gameAlreadyStarted', onGameAlreadyStarted);
     socket.on('updateGameState', onUpdateGameState);
+    socket.on('updateFirstLine', onUpdateFirstLine);
     socket.on('gameOver', onGameOver);
+    socket.on('gameWin', onGameWin);
     return () => {
       socket.off('currentPlayers', onCurrentPlayers);
       socket.off('playerLeaved', onPlayerLeaved);
       socket.off('playerJoined', onPlayerJoined);
       socket.off('gameAlreadyStarted', onGameAlreadyStarted);
       socket.off('updateGameState', onUpdateGameState);
+      socket.off('updateFirstLine', onUpdateFirstLine);
       socket.off('gameOver', onGameOver);
+      socket.off('gameWin', onGameWin);
     };
   }, [dispatch]);
 
