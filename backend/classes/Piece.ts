@@ -6,7 +6,11 @@ export class Piece {
 
   constructor(matrix: number[][]) {
     this.matrix = matrix;
-    this.position = { x: 3, y: 0 };
+    if (this.matrix[0].some((cell) => cell === 2)) {
+      this.position = { x: 4, y: 0 };
+    } else {
+      this.position = { x: 3, y: 0 };
+    }
   }
 
   move(offsetX: number, offsetY: number) {

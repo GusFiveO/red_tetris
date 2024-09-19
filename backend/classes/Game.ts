@@ -65,6 +65,9 @@ export class Game extends EventEmitter {
       if (moveType == 'rotate') {
         player.rotatePiece();
       }
+      if (moveType == 'hardDrop') {
+        player.hardDropPiece();
+      }
     }
   }
 

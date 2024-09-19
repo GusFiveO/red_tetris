@@ -1,9 +1,8 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { SocketContext } from '../pages/Game';
-import { updatePlayerField } from '../store/features/playerSlice';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { createRandomMatrix, getColorForNumber } from '../utils/gameUtils';
+import { getColorForNumber } from '../utils/gameUtils';
 
 const COLUMNS = 10;
 const ROWS = 20;
@@ -42,7 +41,7 @@ export const Field = () => {
           console.log(event.key);
           socket.emit('playerMove', { roomName: room, moveType: 'right' });
         } else if (event.key === ' ') {
-          dispatch(updatePlayerField(createRandomMatrix(ROWS, COLUMNS)));
+          socket.emit('playerMove', { roomName: room, moveType: 'hardDrop' });
           console.log(field);
         }
 

@@ -99,6 +99,37 @@ export class Player extends EventEmitter {
     this.emit('updateGameState');
   }
 
+  hardDropPiece() {
+    if (this.gameOver) {
+      return;
+    }
+    while (!this.collides()) {
+      this.currentPiece.move(0, 1);
+    }
+
+    this.currentPiece.move(0, -1);
+    this.lockPiece();
+    this.clearCompletedLine();
+    while (this.pendingPenality.length !== 0) {
+      const penality = this.pendingPenality.pop();
+      if (penality) {
+        this.addUndestructibleLine(penality);
+      }
+    }
+    this.currentPiece = this.generateNewPiece();
+    if (this.hasLost()) {
+      this.gameOver = true;
+      this.emit('gameOver');
+    }
+    const firstLine = this.computeFirstLine();
+    if (this.firstLine != firstLine) {
+      this.firstLine = firstLine;
+      this.emit('updateFirstLine');
+    }
+
+    this.emit('updateGameState');
+  }
+
   dropPiece() {
     if (this.gameOver) {
       return;
