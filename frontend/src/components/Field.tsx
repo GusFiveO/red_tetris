@@ -9,7 +9,7 @@ const COLUMNS = 10;
 const ROWS = 20;
 
 export const Field = () => {
-  const { room, playerName } = useParams();
+  const { room } = useParams();
   const socket = useContext(SocketContext);
   const field = useAppSelector((state: RootState) => state.player.field);
   const score = useAppSelector((state: RootState) => state.player.score);

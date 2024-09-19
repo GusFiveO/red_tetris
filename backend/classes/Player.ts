@@ -16,7 +16,7 @@ export class Player extends EventEmitter {
   tetrominoSequence: string[];
   linesCleared: number;
   firstLine: number;
-  pendingPenlity: number[];
+  pendingPenality: number[];
 
   constructor(id: string, name: string, tetrominoSequence: string[]) {
     super();
@@ -33,7 +33,7 @@ export class Player extends EventEmitter {
     this.currentPiece = this.generateNewPiece();
     this.gameInterval = null;
     this.firstLine = 0;
-    this.pendingPenlity = [];
+    this.pendingPenality = [];
   }
 
   initializeField() {
@@ -53,8 +53,6 @@ export class Player extends EventEmitter {
 
     this.gameInterval = setInterval(() => {
       this.update();
-
-      // this.emit('updateGameState');
     }, intervalTime);
   }
 
@@ -111,12 +109,8 @@ export class Player extends EventEmitter {
       this.currentPiece.move(0, -1);
       this.lockPiece();
       this.clearCompletedLine();
-      // if (this.pendingPenlity) {
-      //   this.addUndestructibleLine(this.pendingPenlity);
-      //   this.pendingPenlity = 0;
-      // }
-      while (this.pendingPenlity.length !== 0) {
-        const penality = this.pendingPenlity.pop();
+      while (this.pendingPenality.length !== 0) {
+        const penality = this.pendingPenality.pop();
         if (penality) {
           this.addUndestructibleLine(penality);
         }
@@ -179,8 +173,7 @@ export class Player extends EventEmitter {
   }
 
   addPendingPenality(nbLines: number) {
-    console.log('PENALITY LINES:', nbLines);
-    this.pendingPenlity.push(nbLines);
+    this.pendingPenality.push(nbLines);
   }
 
   addUndestructibleLine(nbLines: number) {

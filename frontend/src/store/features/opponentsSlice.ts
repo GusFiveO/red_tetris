@@ -41,12 +41,6 @@ const opponentsSlice = createSlice({
   name: 'opponents',
   initialState,
   reducers: {
-    // addOpponent: (
-    //   state: OpponentState[],
-    //   action: PayloadAction<OpponentState>
-    // ) => {
-    //   state.push(action.payload);
-    // },
     addOpponent: (
       state: OpponentState[],
       action: PayloadAction<OpponentState>

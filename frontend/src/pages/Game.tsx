@@ -32,8 +32,16 @@ export type ScoreInfo = {
   score: number;
 };
 
+enum GameState {
+  GameOver,
+  GameWin,
+  InGame,
+  InLobby,
+}
+
 export const Game = () => {
   const { room, playerName } = useParams();
+  const [gameState, setGameState] = useState<GameState>(GameState.InLobby);
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -80,13 +88,22 @@ export const Game = () => {
       );
     }
 
+    function onGameStarted() {
+      if (gameState !== GameState.InGame) {
+        setGameState(GameState.InGame);
+      }
+      setIsReady(false);
+    }
+
     function onGameOver(payload: { message: string }) {
       const { message } = payload;
+      setGameState(GameState.GameOver);
       alert(message);
     }
 
     function onGameWin(payload: { message: string }) {
       const { message } = payload;
+      setGameState(GameState.GameWin);
       alert(message);
     }
 
@@ -96,6 +113,7 @@ export const Game = () => {
     socket.on('gameAlreadyStarted', onGameAlreadyStarted);
     socket.on('updateGameState', onUpdateGameState);
     socket.on('updateFirstLine', onUpdateFirstLine);
+    socket.on('gameStarted', onGameStarted);
     socket.on('gameOver', onGameOver);
     socket.on('gameWin', onGameWin);
     return () => {
@@ -105,6 +123,7 @@ export const Game = () => {
       socket.off('gameAlreadyStarted', onGameAlreadyStarted);
       socket.off('updateGameState', onUpdateGameState);
       socket.off('updateFirstLine', onUpdateFirstLine);
+      socket.off('gameStarted', onGameStarted);
       socket.off('gameOver', onGameOver);
       socket.off('gameWin', onGameWin);
     };
@@ -134,9 +153,14 @@ export const Game = () => {
           <Button onClick={leaveRoom}>yes</Button>
         </ModalButton>
       </div>
-      <Button onClick={() => changeReadyState(room, !isReady)}>
-        {isReady ? 'no more ready ?' : 'ready ?'}
-      </Button>
+      {gameState === GameState.InLobby ? (
+        <Button onClick={() => changeReadyState(room, !isReady)}>
+          {isReady ? 'no more ready ?' : 'ready ?'}
+        </Button>
+      ) : gameState === GameState.GameOver ||
+        gameState === GameState.GameWin ? (
+        <Button onClick={() => window.location.reload()}>play again</Button>
+      ) : null}
       <SocketContext.Provider value={socket}>
         <Field />
       </SocketContext.Provider>

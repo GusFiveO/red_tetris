@@ -38,6 +38,7 @@ export class Game extends EventEmitter {
 
   start() {
     this.started = true;
+    this.emit('gameStarted');
     for (const player of Object.values(this.players)) {
       player.startGameLoop();
     }
@@ -93,6 +94,7 @@ export class Game extends EventEmitter {
       const winner = this.getWinner();
       if (winner) {
         winner.stopGameLoop();
+        this.started = false;
         this.emit('gameWinner', winner.id);
       }
     });

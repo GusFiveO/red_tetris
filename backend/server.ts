@@ -48,6 +48,10 @@ io.on('connection', (socket: Socket) => {
       console.log(`joinRoom: ${roomName}`);
       const newGame = new Game(roomName);
 
+      newGame.on('gameStarted', () => {
+        io.to(roomName).emit('gameStarted');
+      });
+
       newGame.on('gameOver', (playerId: string) => {
         console.log('Game Over');
         io.to(playerId).emit('gameOver', { message: 'You lost!' });
