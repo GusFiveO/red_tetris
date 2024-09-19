@@ -159,11 +159,21 @@ io.on('connection', (socket: Socket) => {
     console.log(`Player disconnected ${socket.id}`);
 
     for (const roomName in games) {
+      console.log('leaving while started');
       if (games[roomName].hasPlayer(socket.id)) {
         games[roomName].removePlayer(socket.id);
         socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
           delete games[roomName];
+        }
+        if (games[roomName].started == true) {
+          const remainingPlayer = Object.values(games[roomName].players);
+          if (remainingPlayer.length == 1) {
+            const winner = remainingPlayer[0];
+            winner.stopGameLoop();
+            games[roomName].started = false;
+            io.to(winner.id).emit('gameWin', { message: 'You win!' });
+          }
         }
         break;
       }
@@ -179,6 +189,15 @@ io.on('connection', (socket: Socket) => {
         socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
           delete games[roomName];
+        }
+        if (games[roomName].started == true) {
+          const remainingPlayer = Object.values(games[roomName].players);
+          if (remainingPlayer.length == 1) {
+            const winner = remainingPlayer[0];
+            winner.stopGameLoop();
+            games[roomName].started = false;
+            io.to(winner.id).emit('gameWin', { message: 'You win!' });
+          }
         }
         break;
       }
