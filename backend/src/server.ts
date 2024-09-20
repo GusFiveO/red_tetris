@@ -156,7 +156,7 @@ io.on('connection', (socket: Socket) => {
   );
 
   socket.on('leaveRoom', () => {
-    console.log(`Player disconnected ${socket.id}`);
+    console.log(`Player leaved ${socket.id}`);
 
     for (const roomName in games) {
       console.log('leaving while started');
@@ -165,8 +165,7 @@ io.on('connection', (socket: Socket) => {
         socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
           delete games[roomName];
-        }
-        if (games[roomName].started == true) {
+        } else if (games[roomName].started == true) {
           const remainingPlayer = Object.values(games[roomName].players);
           if (remainingPlayer.length == 1) {
             const winner = remainingPlayer[0];
@@ -189,8 +188,7 @@ io.on('connection', (socket: Socket) => {
         socket.to(roomName).emit('playerLeaved', socket.id);
         if (games[roomName].isEmpty()) {
           delete games[roomName];
-        }
-        if (games[roomName].started == true) {
+        } else if (games[roomName].started == true) {
           const remainingPlayer = Object.values(games[roomName].players);
           if (remainingPlayer.length == 1) {
             const winner = remainingPlayer[0];

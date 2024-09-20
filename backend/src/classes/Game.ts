@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Player } from './Player';
-import { TETROMINOS } from './utils';
+import { mergeField, TETROMINOS } from './utils';
 
 interface Players {
   [playerId: string]: Player;
@@ -19,6 +19,7 @@ export class Game extends EventEmitter {
     this.started = false;
     this.tetrominoSequence = this.generateTetrominoSequence();
   }
+  // INITIALIZATION
 
   generateTetrominoSequence(): string[] {
     const sequence = [];
@@ -32,8 +33,13 @@ export class Game extends EventEmitter {
     return sequence;
   }
 
+  // GAME STATE
   isStarted() {
     return this.started;
+  }
+
+  isEmpty() {
+    return Object.keys(this.players).length === 0;
   }
 
   start() {
@@ -44,37 +50,14 @@ export class Game extends EventEmitter {
     }
   }
 
-  areAllPlayersReady() {
+  stop() {
     for (const player of Object.values(this.players)) {
-      if (!player.isReady()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  handlePlayerMove(playerId: string, moveType: string) {
-    const player = this.players[playerId];
-    if (player && !player.gameOver) {
-      if (moveType == 'left' || moveType == 'right') {
-        player.movePiece(moveType);
-      }
-      if (moveType == 'drop') {
-        player.dropPiece();
-      }
-      if (moveType == 'rotate') {
-        player.rotatePiece();
-      }
-      if (moveType == 'hardDrop') {
-        player.hardDropPiece();
-      }
+      player.stopGameLoop();
+      this.started = false;
     }
   }
 
-  hasPlayer(playerId: string) {
-    return !!this.players[playerId];
-  }
-
+  // PLAYER RELATED METHODS
   addPlayer(playerId: string, playerName: string) {
     if (!this.players[playerId]) {
       const newPlayer = new Player(playerId, playerName, [
@@ -86,7 +69,55 @@ export class Game extends EventEmitter {
       console.log(`Player ${playerName} join the game ${this.roomName}`);
       this.players[playerId] = newPlayer;
       return this.players[playerId];
+    } else {
+      return this.players[playerId];
     }
+  }
+
+  removePlayer(playerId: string) {
+    if (this.players[playerId]) {
+      this.players[playerId].stopGameLoop();
+      delete this.players[playerId];
+      console.log(`Player ${playerId} removed from game ${this.roomName}`);
+    }
+  }
+
+  hasPlayer(playerId: string) {
+    return !!this.players[playerId];
+  }
+
+  getAllPlayers() {
+    return Object.values(this.players);
+  }
+
+  getAllOponents(playerId: string) {
+    return Object.values(this.players).filter(
+      (player) => player.id != playerId
+    );
+  }
+
+  getWinner() {
+    if (this.started) {
+      const inGamePlayers = Object.values(this.players).filter(
+        (player) => !player.gameOver
+      );
+      if (inGamePlayers.length === 1) {
+        return inGamePlayers[0];
+      }
+    }
+    return null;
+  }
+
+  areAllPlayersReady() {
+    if (this.isEmpty()) {
+      return false;
+    }
+    for (const player of Object.values(this.players)) {
+      if (!player.isReady()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   playerEventHandler(newPlayer: Player) {
@@ -94,10 +125,10 @@ export class Game extends EventEmitter {
 
     newPlayer.on('gameOver', () => {
       this.emit('gameOver', playerId);
+      this.players[playerId].gameOver = true;
       const winner = this.getWinner();
       if (winner) {
-        winner.stopGameLoop();
-        this.started = false;
+        this.stop();
         this.emit('gameWinner', winner.id);
       }
     });
@@ -105,7 +136,7 @@ export class Game extends EventEmitter {
     newPlayer.on('updateGameState', () => {
       const player = this.players[playerId];
       if (player) {
-        const field = player.getMergedField();
+        const field = mergeField(player.field, player.currentPiece);
         this.emit('updateGameState', {
           playerId: playerId,
           field: field,
@@ -129,42 +160,29 @@ export class Game extends EventEmitter {
     });
   }
 
-  getWinner() {
-    const inGamePlayers = Object.values(this.players).filter(
-      (player) => !player.gameOver
-    );
-    if (inGamePlayers.length === 1) {
-      return inGamePlayers[0];
+  // GAMEPLAY
+  handlePlayerMove(playerId: string, moveType: string) {
+    const player = this.players[playerId];
+    if (player && !player.gameOver) {
+      if (moveType == 'left' || moveType == 'right') {
+        player.movePiece(moveType);
+      }
+      if (moveType == 'drop') {
+        player.dropPiece();
+      }
+      if (moveType == 'rotate') {
+        player.rotatePiece();
+      }
+      if (moveType == 'hardDrop') {
+        player.hardDropPiece();
+      }
     }
-    return null;
   }
-
   applyPenalities(playerExceptionId: string, nbLines: number) {
     for (const player of Object.values(this.players)) {
       if (player.id != playerExceptionId) {
         player.addPendingPenality(nbLines);
       }
     }
-  }
-
-  removePlayer(playerId: string) {
-    if (this.players[playerId]) {
-      delete this.players[playerId];
-      console.log(`Player ${playerId} removed from game ${this.roomName}`);
-    }
-  }
-
-  isEmpty() {
-    return Object.keys(this.players).length === 0;
-  }
-
-  getAllPlayers() {
-    return Object.values(this.players);
-  }
-
-  getAllOponents(playerId: string) {
-    return Object.values(this.players).filter(
-      (player) => player.id != playerId
-    );
   }
 }

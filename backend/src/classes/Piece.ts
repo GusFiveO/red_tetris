@@ -1,4 +1,4 @@
-import { Matrix } from './utils';
+import { Matrix, rotateMatrix } from './utils';
 
 export class Piece {
   matrix: Matrix;
@@ -19,12 +19,6 @@ export class Piece {
   }
 
   rotate() {
-    this.matrix = this.rotateMatrix(this.matrix);
-  }
-
-  rotateMatrix(matrix: Matrix): Matrix {
-    return matrix[0].map((_, index) =>
-      matrix.map((row) => row[index]).reverse()
-    );
+    this.matrix = rotateMatrix(this.matrix);
   }
 }

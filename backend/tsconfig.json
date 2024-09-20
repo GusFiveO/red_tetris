@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ESNext", // Modifier vers ESNext
-    "module": "CommonJS", // Modifier vers CommonJS
+    "target": "ESNext", 
+    "module": "CommonJS", 
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

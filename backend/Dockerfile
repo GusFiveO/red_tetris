@@ -11,4 +11,4 @@ RUN yarn install
 
 COPY . .
 
-CMD ["sh", "-c", "yarn exec prisma generate && yarn prisma migrate deploy && yarn exec nodemon server.ts & yarn prisma studio"]
+CMD ["sh", "-c", "yarn exec prisma generate && yarn prisma migrate deploy && yarn exec nodemon src/server.ts & yarn prisma studio"]

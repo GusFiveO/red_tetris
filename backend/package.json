@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "jest --detectOpenHandles"
+    "test": "jest --coverage --detectOpenHandles"
   },
   "dependencies": {
     "@prisma/client": "^5.9.1",

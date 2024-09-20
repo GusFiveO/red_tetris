@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { PlayerScore } from '../prisma/models';
+import { PlayerScore } from '../../prisma/models';
 
 const prisma = new PrismaClient();
 
