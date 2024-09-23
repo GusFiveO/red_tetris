@@ -23,7 +23,7 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
 
       newGame.on('updateFirstLine', onFirstLineUpdate(io, roomName));
 
-      newGame.on('gameWinner', onGameWinner(io));
+      newGame.on('gameWinner', onGameWinner(io, games, roomName));
 
       games[roomName] = newGame;
     }

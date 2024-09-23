@@ -129,7 +129,11 @@ export class Game extends EventEmitter {
       const winner = this.getWinner();
       if (winner) {
         this.stop();
-        this.emit('gameWinner', winner.id);
+        this.emit('gameWinner', {
+          playerId: winner.id,
+          playerName: winner.name,
+          playerScore: winner.score,
+        });
       }
     });
 
