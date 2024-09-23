@@ -21,8 +21,6 @@ describe('Game unit test suites', () => {
   game.handlePlayerMove('1', 'rotate');
   game.handlePlayerMove('1', 'hardDrop');
 
-  // player1.emit('updateGameState');
-  // player1.emit('updateFirstLine');
   player1.emit('linesDeleted', { nbLines: 2 });
   player1.emit('gameOver');
 

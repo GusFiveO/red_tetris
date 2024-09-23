@@ -4,8 +4,14 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { Game } from './classes/Game';
-import { Matrix } from './classes/utils';
 import { playerScoreRouter } from './routes/playerScore';
+import {
+  addPlayer,
+  onLeaveRoom,
+  onPlayerMove,
+  onPlayerReady,
+  onStartGame,
+} from './serverHandler';
 
 const app = express();
 const port = process.env.BACK_PORT;
@@ -35,7 +41,7 @@ const server = httpServer.listen(port, () => {
   console.log(`Example app listening on port : ${port}`);
 });
 
-interface Games {
+export interface Games {
   [roomName: string]: Game;
 }
 
@@ -43,164 +49,17 @@ const games: Games = {};
 
 io.on('connection', (socket: Socket) => {
   console.log(`New socket connection ${socket.id}`);
-  socket.on('joinRoom', (roomName: string, playerName: string) => {
-    if (!games[roomName]) {
-      console.log(`joinRoom: ${roomName}`);
-      const newGame = new Game(roomName);
+  socket.on('joinRoom', addPlayer(io, socket, games));
 
-      newGame.on('gameStarted', () => {
-        io.to(roomName).emit('gameStarted');
-      });
+  socket.on('startGame', onStartGame(games));
 
-      newGame.on('gameOver', (playerId: string) => {
-        console.log('Game Over');
-        io.to(playerId).emit('gameOver', { message: 'You lost!' });
-      });
+  socket.on('playerReady', onPlayerReady(io, games, socket));
 
-      newGame.on(
-        'updateGameState',
-        (payload: { playerId: string; field: Matrix; score: number }) => {
-          const { playerId, field, score } = payload;
-          io.to(playerId).emit('updateGameState', {
-            field: field,
-            score: score,
-          });
-        }
-      );
+  socket.on('playerMove', onPlayerMove(socket, games));
 
-      newGame.on(
-        'updateFirstLine',
-        (payload: { playerId: string; firstLine: number }) => {
-          const { playerId, firstLine } = payload;
-          io.to(roomName).except(playerId).emit('updateFirstLine', {
-            playerId: playerId,
-            firstLine: firstLine,
-          });
-        }
-      );
+  socket.on('leaveRoom', onLeaveRoom(io, socket, games));
 
-      newGame.on('gameWinner', (playerId: string) => {
-        io.to(playerId).emit('gameWin', { message: 'You win!' });
-      });
-      games[roomName] = newGame;
-    }
-
-    const game = games[roomName];
-    if (game.isStarted()) {
-      socket.emit(
-        'gameAlreadyStarted',
-        'The game has already started, you cannot join.'
-      );
-      return;
-    }
-
-    const allOponents = game.getAllOponents(socket.id).map((player) => {
-      return { id: player.id, name: player.name, firstLine: 0 };
-    });
-    socket.emit('currentPlayers', allOponents);
-
-    const newPlayer = game.addPlayer(socket.id, playerName);
-
-    if (newPlayer) {
-      socket.to(roomName).emit('playerJoined', {
-        id: newPlayer?.id,
-        name: newPlayer?.name,
-        firstLine: 0,
-      });
-    }
-
-    socket.join(roomName);
-  });
-
-  socket.on('startGame', (roomName: string) => {
-    const game = games[roomName];
-
-    if (game) {
-      game.start();
-    }
-    console.log(`Game ${roomName} started`);
-  });
-
-  socket.on(
-    'playerReady',
-    (payload: { roomName: string; newState: boolean }) => {
-      const { roomName, newState } = payload;
-      if (!games[roomName]) {
-        return;
-      }
-      const game = games[roomName];
-      const player = game.players[socket.id];
-
-      player.ready = newState;
-      io.to(roomName).emit('playerReady', {
-        playerId: socket.id,
-        state: newState,
-      });
-      console.log('allplayer are ready ?:', game.areAllPlayersReady());
-      if (game.areAllPlayersReady()) {
-        game.start();
-      }
-    }
-  );
-
-  socket.on(
-    'playerMove',
-    (moveData: { roomName: string; moveType: string }) => {
-      const { roomName, moveType } = moveData;
-      const game = games[roomName];
-
-      if (game) {
-        game.handlePlayerMove(socket.id, moveType);
-      }
-    }
-  );
-
-  socket.on('leaveRoom', () => {
-    console.log(`Player leaved ${socket.id}`);
-
-    for (const roomName in games) {
-      console.log('leaving while started');
-      if (games[roomName].hasPlayer(socket.id)) {
-        games[roomName].removePlayer(socket.id);
-        socket.to(roomName).emit('playerLeaved', socket.id);
-        if (games[roomName].isEmpty()) {
-          delete games[roomName];
-        } else if (games[roomName].started == true) {
-          const remainingPlayer = Object.values(games[roomName].players);
-          if (remainingPlayer.length == 1) {
-            const winner = remainingPlayer[0];
-            winner.stopGameLoop();
-            games[roomName].started = false;
-            io.to(winner.id).emit('gameWin', { message: 'You win!' });
-          }
-        }
-        break;
-      }
-    }
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`Player disconnected ${socket.id}`);
-
-    for (const roomName in games) {
-      if (games[roomName].hasPlayer(socket.id)) {
-        games[roomName].removePlayer(socket.id);
-        socket.to(roomName).emit('playerLeaved', socket.id);
-        if (games[roomName].isEmpty()) {
-          delete games[roomName];
-        } else if (games[roomName].started == true) {
-          const remainingPlayer = Object.values(games[roomName].players);
-          if (remainingPlayer.length == 1) {
-            const winner = remainingPlayer[0];
-            winner.stopGameLoop();
-            games[roomName].started = false;
-            io.to(winner.id).emit('gameWin', { message: 'You win!' });
-          }
-        }
-        break;
-      }
-    }
-  });
+  socket.on('disconnect', onLeaveRoom(io, socket, games));
 });
 
 export { app, io, server };

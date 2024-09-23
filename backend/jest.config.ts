@@ -16,7 +16,7 @@ const config: Config.InitialOptions = {
     ],
   },
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!**/node_modules/**'],
+  collectCoverageFrom: ['src/**/classes/*.{ts,tsx}', '!**/node_modules/**'],
   coverageReporters: ['lcov', 'text-summary'],
 };
 
