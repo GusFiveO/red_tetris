@@ -3,33 +3,6 @@ import api from '../api/api';
 import '../styles/custom-utilities.css';
 import '../styles/hide-scrollbar.css';
 
-// const opponentsSample = [
-//   { name: 'Player 1', score: 100 },
-//   { name: 'Player 2', score: 150 },
-//   { name: 'Player 3', score: 80 },
-//   { name: 'Player 4', score: 200 },
-//   { name: 'Player 5', score: 120 },
-//   { name: 'Player 6', score: 90 },
-//   { name: 'Player 7', score: 110 },
-//   { name: 'Player 8', score: 180 },
-//   { name: 'Player 9', score: 160 },
-//   { name: 'Player 10', score: 140 },
-//   { name: 'Player 8', score: 180 },
-//   { name: 'Player 9', score: 160 },
-//   { name: 'Player 10', score: 140 },
-//   { name: 'Player 8', score: 180 },
-//   { name: 'Player 9', score: 160 },
-//   { name: 'Player 10', score: 140 },
-//   { name: 'Player 8', score: 180 },
-//   { name: 'Player 9', score: 160 },
-//   { name: 'Player 10', score: 140 },
-//   { name: 'Player 8', score: 180 },
-//   { name: 'Player 9', score: 160 },
-//   { name: 'Player 10', score: 140 },
-//   { name: 'Player 8', score: 180 },
-//   { name: 'Player 9', score: 160 },
-//   { name: 'Player 10', score: 140 },
-// ];
 
 export const Scoreboard = () => {
   const [scoreboardInfo, setScoreboardInfo] = useState([]);
@@ -41,10 +14,9 @@ export const Scoreboard = () => {
     };
     getScoreboardInfo();
   }, []);
-  // const scoreComponent = [...opponentsSample]
   const scoreComponent = [...scoreboardInfo]
     .sort((a, b) => {
-      return a.score < b.score ? 1 : 0;
+      return a.score < b.score ? 0 : -1;
     })
     .map(({ name, score }, index) => (
       <div key={index} className='m-2 2xl:text-xl md:text-base text-xs'>

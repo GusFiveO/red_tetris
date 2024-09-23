@@ -1,4 +1,4 @@
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Matrix } from './classes/utils';
 import { Games } from './server';
 import { createPlayerScore } from './services/playerScoreService';
@@ -36,7 +36,7 @@ export const onFirstLineUpdate = (io: Server, roomName: string) => {
   };
 };
 
-export const onGameWinner = (io: Server, games: Games, roomName: string) => {
+export const onGameWinner = (io: Server, socket: Socket , games: Games, roomName: string) => {
   return (payload: {
     playerId: string;
     playerName: string;
@@ -46,5 +46,6 @@ export const onGameWinner = (io: Server, games: Games, roomName: string) => {
     io.to(playerId).emit('gameWin', { message: 'You win!' });
     delete games[roomName];
     createPlayerScore({ name: playerName, score: playerScore });
+    socket.disconnect()
   };
 };
