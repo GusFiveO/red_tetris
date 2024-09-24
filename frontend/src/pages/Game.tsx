@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
+import Modal from '../components/Modal';
 import ModalButton from '../components/ModalButton';
 import { Spectrum } from '../components/Spectrum';
 import {
@@ -11,6 +12,7 @@ import {
   updateOpponentFirstLine,
 } from '../store/features/opponentsSlice';
 import {
+  Piece,
   updatePlayerField,
   updatePlayerScore,
 } from '../store/features/playerSlice';
@@ -43,6 +45,7 @@ export const Game = () => {
   const { room, playerName } = useParams();
   const [gameState, setGameState] = useState<GameState>(GameState.InLobby);
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [modalText, setModalText] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -67,13 +70,17 @@ export const Game = () => {
     }
 
     function onGameAlreadyStarted(message: string) {
-      alert(message);
+      setGameState(GameState.InGame);
+      setModalText(message);
     }
 
-    function onUpdateGameState(payload: { field: number[][]; score: number }) {
-      const { field, score } = payload;
-      console.log(field);
-      dispatch(updatePlayerField(field));
+    function onUpdateGameState(payload: {
+      field: number[][];
+      score: number;
+      piece: Piece;
+    }) {
+      const { field, score, piece } = payload;
+      dispatch(updatePlayerField({ field: field, piece: piece }));
       dispatch(updatePlayerScore(score));
     }
 
@@ -98,13 +105,16 @@ export const Game = () => {
     function onGameOver(payload: { message: string }) {
       const { message } = payload;
       setGameState(GameState.GameOver);
-      alert(message);
+      // alert(message);
+      setModalText(message);
     }
 
     function onGameWin(payload: { message: string }) {
       const { message } = payload;
       setGameState(GameState.GameWin);
-      alert(message);
+      // alert(message);
+
+      setModalText(message);
     }
 
     socket.on('currentPlayers', onCurrentPlayers);
@@ -157,14 +167,22 @@ export const Game = () => {
         <Button onClick={() => changeReadyState(room, !isReady)}>
           {isReady ? 'no more ready ?' : 'ready ?'}
         </Button>
-      ) : gameState === GameState.GameOver ||
-        gameState === GameState.GameWin ? (
-        <Button onClick={() => window.location.reload()}>play again</Button>
       ) : null}
       <SocketContext.Provider value={socket}>
         <Field />
       </SocketContext.Provider>
       <Spectrum />
+      {modalText === null ? null : (
+        <Modal>
+          {modalText}
+          {gameState === GameState.GameOver ||
+          gameState === GameState.GameWin ? (
+            <Button onClick={() => window.location.reload()}>play again</Button>
+          ) : gameState === GameState.InGame ? (
+            <Button onClick={leaveRoom}>quit</Button>
+          ) : null}
+        </Modal>
+      )}
     </div>
   );
 };

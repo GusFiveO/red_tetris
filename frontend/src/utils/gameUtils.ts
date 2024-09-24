@@ -40,6 +40,20 @@ export const getColorForNumber = (num: number): string => {
       return 'bg-purple-500 shadow-inner shadow-slate-300';
     case 7: // Red (Z)
       return 'bg-red-500 shadow-inner shadow-slate-300';
+    case 11: // Cyan (I)
+      return 'shadow-inner shadow-cyan-500';
+    case 12: // Blue (J)
+      return 'shadow-inner shadow-blue-500';
+    case 13: // Orange (L)
+      return 'shadow-inner shadow-orange-500 ';
+    case 14: // Yellow (O)
+      return 'shadow-inner shadow-yellow-500 ';
+    case 15: // Green (S)
+      return 'shadow-inner shadow-green-500';
+    case 16: // Purple (T)
+      return 'shadow-inner shadow-purple-500 ';
+    case 17: // Red (Z)
+      return 'shadow-inner shadow-red-500 ';
     case -1: // Red (Z)
       return 'bg-black-500 shadow-inner shadow-slate-300';
     default:

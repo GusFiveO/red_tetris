@@ -3,9 +3,13 @@ import api from '../api/api';
 import '../styles/custom-utilities.css';
 import '../styles/hide-scrollbar.css';
 
+interface ScoreInfo {
+  name: string;
+  score: number;
+}
 
 export const Scoreboard = () => {
-  const [scoreboardInfo, setScoreboardInfo] = useState([]);
+  const [scoreboardInfo, setScoreboardInfo] = useState<ScoreInfo[]>([]);
 
   useEffect(() => {
     const getScoreboardInfo = async () => {
@@ -16,7 +20,8 @@ export const Scoreboard = () => {
   }, []);
   const scoreComponent = [...scoreboardInfo]
     .sort((a, b) => {
-      return a.score < b.score ? 0 : -1;
+      // return a.score < b.score ? 0 : -1;
+      return a.score < b.score ? 1 : 0;
     })
     .map(({ name, score }, index) => (
       <div key={index} className='m-2 2xl:text-xl md:text-base text-xs'>
@@ -38,7 +43,13 @@ export const Scoreboard = () => {
           </div>
         </div>
         <hr className='h-px border border-slate-500 w-full'></hr>
-        <div className='overflow-y-scroll scrollbar-hide'>{scoreComponent}</div>
+        <div className='overflow-y-scroll scrollbar-hide max-w-60'>
+          {scoreComponent.length === 0 ? (
+            <div className='text-center p-2'>No score stored</div>
+          ) : (
+            scoreComponent
+          )}
+        </div>
       </div>
     </div>
   );

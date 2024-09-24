@@ -21,4 +21,11 @@ export class Piece {
   rotate() {
     this.matrix = rotateMatrix(this.matrix);
   }
+
+  getState() {
+    return {
+      matrix: this.matrix,
+      position: this.position,
+    };
+  }
 }

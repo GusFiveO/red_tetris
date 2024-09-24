@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Player } from './Player';
-import { mergeField, TETROMINOS } from './utils';
+import { TETROMINOS } from './utils';
 
 interface Players {
   [playerId: string]: Player;
@@ -124,7 +124,11 @@ export class Game extends EventEmitter {
     const playerId = newPlayer.id;
 
     newPlayer.on('gameOver', () => {
-      this.emit('gameOver', playerId);
+      this.emit('gameOver', {
+        playerId: playerId,
+        playerName: newPlayer.name,
+        playerScore: newPlayer.score,
+      });
       this.players[playerId].gameOver = true;
       const winner = this.getWinner();
       if (winner) {
@@ -140,11 +144,13 @@ export class Game extends EventEmitter {
     newPlayer.on('updateGameState', () => {
       const player = this.players[playerId];
       if (player) {
-        const field = mergeField(player.field, player.currentPiece);
+        // const field = mergeField(player.field, player.currentPiece);
+        const field = player.field;
         this.emit('updateGameState', {
           playerId: playerId,
           field: field,
           score: player.score,
+          piece: player.currentPiece.getState(),
         });
       }
     });

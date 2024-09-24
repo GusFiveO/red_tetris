@@ -1,5 +1,3 @@
-import api from '../api/api';
-import { Button } from '../components/Button';
 import { Scoreboard } from '../components/Scoreboard';
 import '../styles/custom-utilities.css';
 
@@ -9,11 +7,11 @@ export const Home = () => {
       <div className='bg-red-500'>RED-TETRIS</div>
 
       <Scoreboard />
-      <Button
+      {/* <Button
         onClick={() => api.post('/scoreboard', { name: 'lol', score: 1000 })}
       >
         PUSH SCORE
-      </Button>
+      </Button> */}
       <div>To join a game use the URL "/:room/:player_name"</div>
     </div>
   );

@@ -28,11 +28,11 @@ describe('Game unit test suites', () => {
     expect(game.hasPlayer(player1.id)).toBe(true);
   });
 
-  it('should return [player1]', () => {
+  it('should return [player1, player3]', () => {
     expect(game.getAllPlayers()).toStrictEqual([player1, player3]);
   });
 
-  it('should return []', () => {
+  it('should return [player3]', () => {
     expect(game.getAllOponents(player1.id)).toStrictEqual([player3]);
   });
 
