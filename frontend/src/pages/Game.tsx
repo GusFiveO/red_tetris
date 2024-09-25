@@ -172,27 +172,32 @@ export const Game = () => {
           <Button onClick={leaveRoom}>yes</Button>
         </ModalButton>
       </div>
-      {gameState === GameState.InLobby ? (
-        <Button onClick={() => changeReadyState(room, !isReady)}>
-          {isReady ? 'no more ready ?' : 'ready ?'}
-        </Button>
-      ) : null}
-      <SocketContext.Provider value={socket}>
-        <Field />
-      </SocketContext.Provider>
-
-      <Spectrum />
-      {modalText === null ? null : (
-        <Modal>
-          {modalText}
-          {gameState === GameState.GameOver ||
-          gameState === GameState.GameWin ? (
-            <Button onClick={() => window.location.reload()}>play again</Button>
-          ) : gameState === GameState.InGame ? (
-            <Button onClick={leaveRoom}>quit</Button>
-          ) : null}
-        </Modal>
-      )}
+      <div className='w-1/3 flex flex-col items-end'>
+        {gameState === GameState.InLobby ? (
+          <Button onClick={() => changeReadyState(room, !isReady)}>
+            {isReady ? 'no more ready ?' : 'ready ?'}
+          </Button>
+        ) : null}
+      </div>
+      <div className='w-2/3 flex  items-center'>
+        <SocketContext.Provider value={socket}>
+          <Field />
+        </SocketContext.Provider>
+        <Spectrum />
+        {modalText === null ? null : (
+          <Modal>
+            {modalText}
+            {gameState === GameState.GameOver ||
+            gameState === GameState.GameWin ? (
+              <Button onClick={() => window.location.reload()}>
+                play again
+              </Button>
+            ) : gameState === GameState.InGame ? (
+              <Button onClick={leaveRoom}>quit</Button>
+            ) : null}
+          </Modal>
+        )}
+      </div>
     </div>
   );
 };

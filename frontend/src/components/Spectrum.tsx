@@ -19,8 +19,13 @@ export const Spectrum = () => {
     .map(({ name, firstLine }, index) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
-        <div key={index} className='flex flex-col items-center justify-center'>
-          <div className='m-2 2xl:text-xl md:text-base text-xs'>{name}</div>
+        <div
+          key={index}
+          className='flex flex-col items-center justify-center w-38'
+        >
+          <div className='m-2 2xl:text-xl md:text-base text-xs'>
+            {name.length > 8 ? name.substring(0, 8) + '...' : name}
+          </div>
           <div className='border border-slate-400 rounded'>
             {zerosMatrix.map((row, rowIndex) => (
               <div key={rowIndex} className='flex'>
@@ -40,7 +45,7 @@ export const Spectrum = () => {
     });
 
   return (
-    <div className='info-container max-h-[50%] scrollbar-hide overflow-y-scroll'>
+    <div className='info-container max-h-[50%] scrollbar-hide overflow-y-scroll w-fit'>
       {opponentsComponent}
     </div>
   );

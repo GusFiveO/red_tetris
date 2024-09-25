@@ -71,7 +71,7 @@ export const Field = () => {
   }, [field]);
 
   return (
-    <div className='flex-col'>
+    <div className='w-fit flex-col'>
       <div className='text-center'>SCORE: {score}</div>
       <NextPiece />
       <div className='field-container'>{fieldComponent}</div>

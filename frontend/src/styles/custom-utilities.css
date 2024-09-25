@@ -3,7 +3,7 @@
 }
 
 .btn {
-    @apply flex items-center bg-gray-300 text-slate-800 rounded-md m-2 px-2 shadow-gray-500 shadow-md
+    @apply flex items-center bg-gray-300 text-slate-800 rounded-md m-2 px-2 shadow-gray-500 shadow-md 
 }
 
 .btn:hover {
