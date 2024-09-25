@@ -172,7 +172,7 @@ export const Game = () => {
           <Button onClick={leaveRoom}>yes</Button>
         </ModalButton>
       </div>
-      <div className='w-1/3 flex flex-col items-end'>
+      <div className='w-[45%] flex flex-col items-end'>
         {gameState === GameState.InLobby ? (
           <Button onClick={() => changeReadyState(room, !isReady)}>
             {isReady ? 'no more ready ?' : 'ready ?'}

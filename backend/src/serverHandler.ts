@@ -97,7 +97,7 @@ export const onPlayerMove = (socket: Socket, games: Games) => {
     const { roomName, moveType } = moveData;
     const game = games[roomName];
 
-    if (game) {
+    if (game && game.isStarted()) {
       game.handlePlayerMove(socket.id, moveType);
     }
   };
