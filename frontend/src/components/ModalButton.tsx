@@ -21,7 +21,7 @@ const ModalButton = ({ buttonText, children }: ModalButtonProps) => {
     <div>
       <Button onClick={openModal}>
         {buttonText}
-        <img src='exit.svg' className='h-5 w-5 m-2'></img>
+        <img src='/exit.svg' className='h-5 w-5 m-2'></img>
       </Button>
       {isOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center'>

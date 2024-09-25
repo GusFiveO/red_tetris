@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { SocketContext } from '../pages/Game';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { getColorForNumber } from '../utils/gameUtils';
+import NextPiece from './NextPiece';
 
 const COLUMNS = 10;
 const ROWS = 20;
@@ -70,8 +71,9 @@ export const Field = () => {
   }, [field]);
 
   return (
-    <div>
+    <div className='flex-col'>
       <div className='text-center'>SCORE: {score}</div>
+      <NextPiece />
       <div className='field-container'>{fieldComponent}</div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   onGameStarted,
   onGameStateUpdate,
   onGameWinner,
+  onNextPieceUpdate,
 } from './GameHandler';
 import { Games } from './server';
 import { createPlayerScore } from './services/playerScoreService';
@@ -23,6 +24,8 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
       newGame.on('updateGameState', onGameStateUpdate(io));
 
       newGame.on('updateFirstLine', onFirstLineUpdate(io, roomName));
+
+      newGame.on('updateNextPiece', onNextPieceUpdate(io));
 
       newGame.on('gameWinner', onGameWinner(io, socket, games, roomName));
 
@@ -119,11 +122,11 @@ export const onLeaveRoom = (io: Server, socket: Socket, games: Games) => {
             games[roomName].started = false;
             delete games[roomName];
             io.to(winner.id).emit('gameWin', { message: 'You win!' });
-            io.sockets.sockets.get(winner.id)?.disconnect()
+            io.sockets.sockets.get(winner.id)?.disconnect();
             createPlayerScore({ name: winner.name, score: winner.score });
           }
         }
-        socket.disconnect()
+        socket.disconnect();
         break;
       }
     }

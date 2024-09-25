@@ -11,12 +11,13 @@
 }
 
 .block {
-    @apply 2xl:w-10 2xl:h-10 md:w-8 md:h-8 w-6 h-6 border border-slate-900 rounded 
+    @apply 2xl:w-9 2xl:h-9 md:w-8 md:h-8 w-6 h-6 border border-slate-900 rounded 
 }
 
 .field-container {
     @apply flex flex-col items-center justify-center m-4 border border-slate-400 shadow-2xl rounded-md
 }
+
 
 .info-container {
     @apply flex flex-col items-center bg-slate-900 rounded-md border border-slate-400 shadow-2xl shadow-inner shadow-slate-300

@@ -96,14 +96,22 @@ export class Player extends EventEmitter {
     return false;
   }
 
+  getNextPiece() {
+    return new Piece(TETROMINOS[this.tetrominoSequence[0]]);
+  }
+
   // GAME LOOP
   startGameLoop() {
     this.stopGameLoop();
+    this.emit('updateGameState');
 
     const intervalTime = this.pieceDropInterval;
 
     this.gameInterval = setInterval(() => {
       this.dropPiece();
+      if (this.gameOver) {
+        this.emit('gameOver');
+      }
     }, intervalTime);
   }
 
@@ -126,6 +134,7 @@ export class Player extends EventEmitter {
     if (tetromino) {
       this.tetrominoSequence.push(tetromino);
       const newPiece = new Piece(TETROMINOS[tetromino]);
+      this.emit('updateNextPiece');
       return newPiece;
     }
     return new Piece(TETROMINOS['I']);
@@ -188,7 +197,7 @@ export class Player extends EventEmitter {
     this.currentPiece = this.generateNewPiece();
     if (this.hasLost()) {
       this.gameOver = true;
-      this.emit('gameOver');
+      // this.emit('gameOver');
     }
     const firstLine = getFirstLine(this.field);
     if (this.firstLine != firstLine) {
@@ -231,6 +240,9 @@ export class Player extends EventEmitter {
       const penality = this.pendingPenality.pop();
       if (penality) {
         this.addUndestructibleLine(penality);
+        if (this.firstLine + penality > this.field.length) {
+          this.gameOver = true;
+        }
       }
     }
   }

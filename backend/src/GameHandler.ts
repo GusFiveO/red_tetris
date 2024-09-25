@@ -53,6 +53,16 @@ export const onFirstLineUpdate = (io: Server, roomName: string) => {
   };
 };
 
+export const onNextPieceUpdate = (io: Server) => {
+  return (payload: { playerId: string; nextPiece: Piece }) => {
+    const { playerId, nextPiece } = payload;
+    console.log(`${playerId} UPDATE NEXT PIECE ${nextPiece.matrix}`);
+    io.to(playerId).emit('updateNextPiece', {
+      nextPiece: nextPiece,
+    });
+  };
+};
+
 export const onGameWinner = (
   io: Server,
   socket: Socket,
@@ -67,7 +77,8 @@ export const onGameWinner = (
     const { playerId, playerName, playerScore } = payload;
     io.to(playerId).emit('gameWin', { message: 'You win!' });
     console.log('disconnect');
-    socket.disconnect();
+    // socket.disconnect();
+    io.sockets.sockets.get(playerId)?.disconnect();
     delete games[roomName];
     createPlayerScore({ name: playerName, score: playerScore });
   };

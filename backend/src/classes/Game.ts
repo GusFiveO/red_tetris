@@ -47,6 +47,10 @@ export class Game extends EventEmitter {
     this.emit('gameStarted');
     for (const player of Object.values(this.players)) {
       player.startGameLoop();
+      this.emit('updateNextPiece', {
+        playerId: player.id,
+        nextPiece: player.getNextPiece().getState(),
+      });
     }
   }
 
@@ -166,6 +170,14 @@ export class Game extends EventEmitter {
       this.emit('updateFirstLine', {
         playerId: newPlayer.id,
         firstLine: newPlayer.firstLine,
+      });
+    });
+
+    newPlayer.on('updateNextPiece', () => {
+      console.log('UPDATE NEXT PIECE IN GAME');
+      this.emit('updateNextPiece', {
+        playerId: newPlayer.id,
+        nextPiece: newPlayer.getNextPiece().getState(),
       });
     });
   }

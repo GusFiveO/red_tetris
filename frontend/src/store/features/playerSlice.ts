@@ -1,24 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createMatrix } from '../../utils/gameUtils';
 
-interface PlayerState {
-  id: string;
-  score: number;
-  field: number[][];
-}
-
-const initialState: PlayerState = {
-  id: '',
-  score: 0,
-  field: createMatrix(20, 10),
-};
-
 type Matrix = number[][];
 
 export interface Piece {
   matrix: Matrix;
   position: { x: number; y: number };
 }
+
+interface PlayerState {
+  id: string;
+  score: number;
+  field: number[][];
+  nextPiece: Matrix;
+}
+
+const initialState: PlayerState = {
+  id: '',
+  score: 0,
+  field: createMatrix(20, 10),
+  nextPiece: createMatrix(2, 10),
+};
 
 export function mergeField(field: Matrix, piece: Piece) {
   const mergedField = field.map((row) => [...row]);
@@ -74,6 +76,12 @@ const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
+    updatePlayerNextPiece: (
+      state: PlayerState,
+      action: PayloadAction<Piece>
+    ) => {
+      state.nextPiece = mergeField(createMatrix(2, 10), action.payload);
+    },
     updatePlayerScore: (state: PlayerState, action: PayloadAction<number>) => {
       state.score = action.payload;
     },
@@ -100,5 +108,6 @@ const playerSlice = createSlice({
   },
 });
 
-export const { updatePlayerScore, updatePlayerField } = playerSlice.actions;
+export const { updatePlayerScore, updatePlayerField, updatePlayerNextPiece } =
+  playerSlice.actions;
 export default playerSlice.reducer;

@@ -14,6 +14,7 @@ import {
 import {
   Piece,
   updatePlayerField,
+  updatePlayerNextPiece,
   updatePlayerScore,
 } from '../store/features/playerSlice';
 import { useAppDispatch } from '../store/store';
@@ -95,6 +96,12 @@ export const Game = () => {
       );
     }
 
+    function onUpdateNextPiece(payload: { nextPiece: Piece }) {
+      const { nextPiece } = payload;
+      console.log('updateNextPiece:', nextPiece);
+      dispatch(updatePlayerNextPiece(nextPiece));
+    }
+
     function onGameStarted() {
       if (gameState !== GameState.InGame) {
         setGameState(GameState.InGame);
@@ -123,6 +130,7 @@ export const Game = () => {
     socket.on('gameAlreadyStarted', onGameAlreadyStarted);
     socket.on('updateGameState', onUpdateGameState);
     socket.on('updateFirstLine', onUpdateFirstLine);
+    socket.on('updateNextPiece', onUpdateNextPiece);
     socket.on('gameStarted', onGameStarted);
     socket.on('gameOver', onGameOver);
     socket.on('gameWin', onGameWin);
@@ -133,6 +141,7 @@ export const Game = () => {
       socket.off('gameAlreadyStarted', onGameAlreadyStarted);
       socket.off('updateGameState', onUpdateGameState);
       socket.off('updateFirstLine', onUpdateFirstLine);
+      socket.off('updateNextPiece', onUpdateNextPiece);
       socket.off('gameStarted', onGameStarted);
       socket.off('gameOver', onGameOver);
       socket.off('gameWin', onGameWin);
@@ -171,6 +180,7 @@ export const Game = () => {
       <SocketContext.Provider value={socket}>
         <Field />
       </SocketContext.Provider>
+
       <Spectrum />
       {modalText === null ? null : (
         <Modal>
