@@ -16,7 +16,7 @@ export const Spectrum = () => {
     .sort((a, b) => {
       return a.score < b.score ? 1 : 0;
     })
-    .map(({ name, firstLine }, index) => {
+    .map(({ name, spectrum},  index) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
         <div
@@ -33,7 +33,7 @@ export const Spectrum = () => {
                   <div
                     key={colIndex}
                     className={`spectre-block ${
-                      ROWS - rowIndex < firstLine ? 'bg-black' : 'bg-gray-600'
+                      (spectrum.length != 0 && ROWS - rowIndex <= spectrum[colIndex]) ? 'bg-black' : 'bg-gray-600'
                     }`}
                   ></div>
                 ))}

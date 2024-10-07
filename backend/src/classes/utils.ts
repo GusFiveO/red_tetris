@@ -1,3 +1,4 @@
+import { cp } from 'fs';
 import { Piece } from './Piece';
 
 export type Matrix = number[][];
@@ -70,12 +71,24 @@ export function removeCompletedRows(matrix: Matrix) {
   return matrix.filter((row) => row.some((cell) => cell === 0 || cell === -1));
 }
 
-export function getFirstLine(matrix: Matrix) {
-  const firstLine = matrix.findIndex((row) => row.some((cell) => cell !== 0));
-  if (firstLine < 0) {
-    return 0;
+export function getSpectrum(matrix: Matrix) {
+  const result: number[] = [];
+  
+  for (let col = 0; col < matrix[0].length; col++) {
+    let found = false;
+
+    for (let row = 0; row < matrix.length; row++) {
+      if (!found && matrix[row][col] !== 0) {
+        result.push(matrix.length - row);
+        found = true;
+      }
+    }
+
+    if (!found) {
+      result.push(0);
+    }
   }
-  return matrix.length - firstLine;
+  return result;
 }
 
 export function rotateMatrix(matrix: Matrix): Matrix {

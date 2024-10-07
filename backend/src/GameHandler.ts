@@ -43,12 +43,13 @@ export const onGameStateUpdate = (io: Server) => {
   };
 };
 
-export const onFirstLineUpdate = (io: Server, roomName: string) => {
-  return (payload: { playerId: string; firstLine: number }) => {
-    const { playerId, firstLine } = payload;
-    io.to(roomName).except(playerId).emit('updateFirstLine', {
+
+export const onSpectrumUpdate = (io: Server, roomName: string) => {
+  return (payload: { playerId: string; spectrum: number[] }) => {
+    const { playerId, spectrum } = payload;
+    io.to(roomName).except(playerId).emit('updateSpectrum', {
       playerId: playerId,
-      firstLine: firstLine,
+      spectrum: spectrum,
     });
   };
 };

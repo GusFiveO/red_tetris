@@ -3,7 +3,7 @@ import { Piece } from './Piece';
 import {
   calculateDropInterval,
   generateZerosMatrix,
-  getFirstLine,
+  getSpectrum,
   removeCompletedRows,
   TETROMINOS,
   unshiftMatrix,
@@ -22,7 +22,7 @@ export class Player extends EventEmitter {
   gameInterval: NodeJS.Timeout | null;
   tetrominoSequence: string[];
   linesCleared: number;
-  firstLine: number;
+  spectrum: number[];
   pendingPenality: number[];
 
   constructor(id: string, name: string, tetrominoSequence: string[]) {
@@ -39,7 +39,7 @@ export class Player extends EventEmitter {
     this.tetrominoSequence = tetrominoSequence;
     this.currentPiece = this.generateNewPiece();
     this.gameInterval = null;
-    this.firstLine = 0;
+    this.spectrum = [];
     this.pendingPenality = [];
   }
 
@@ -199,10 +199,13 @@ export class Player extends EventEmitter {
       this.gameOver = true;
       // this.emit('gameOver');
     }
-    const firstLine = getFirstLine(this.field);
-    if (this.firstLine != firstLine) {
-      this.firstLine = firstLine;
-      this.emit('updateFirstLine');
+
+    const spectrum = getSpectrum(this.field);
+    console.log('spectrum:', spectrum)
+    if (this.spectrum != spectrum) {
+      this.spectrum = spectrum
+      console.log('updateSpectrum')
+      this.emit('updateSpectrum')
     }
   }
 
@@ -240,7 +243,7 @@ export class Player extends EventEmitter {
       const penality = this.pendingPenality.pop();
       if (penality) {
         this.addUndestructibleLine(penality);
-        if (this.firstLine + penality > this.field.length) {
+        if (Math.max(...this.spectrum) + penality > this.field.length) {
           this.gameOver = true;
         }
       }

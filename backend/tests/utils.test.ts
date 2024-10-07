@@ -2,7 +2,7 @@ import { Piece } from '../src/classes/Piece';
 import {
   calculateDropInterval,
   generateZerosMatrix,
-  getFirstLine,
+  getSpectrum,
   mergeField,
   TETROMINOS,
 } from '../src/classes/utils';
@@ -26,16 +26,9 @@ describe('utils unit tests suites', () => {
     expect(shape).toStrictEqual([5, 10]);
   });
 
-  it('should be 0', () => {
-    expect(getFirstLine(matrix)).toBe(0);
-  });
-
   const copy = [...matrix];
   copy.shift();
   copy.push(Array(10).fill(1));
-  it('should be 1', () => {
-    expect(getFirstLine(copy)).toBe(1);
-  });
 
   const piece = new Piece(TETROMINOS['I']);
   piece.rotate();
@@ -64,5 +57,20 @@ describe('utils unit tests suites', () => {
   ];
   it('should match expected field', () => {
     expect(mergedField).toStrictEqual(expectedMergedField);
+  }),
+  describe('Spectrum unit test', () => {
+    console.log('Spectrum')
+    const testMatrix = [
+      [0, 0, 0, 0],
+      [0, 0, 1, 0],
+      [0, 0, 1, 4],
+      [2, 0, 1, 4],
+      [2, 3, 1, 4],
+    ]; 
+    const result = getSpectrum(testMatrix)
+    console.log(result)
+    it('should match [2, 1, 4, 3]', () => {
+      expect(result).toStrictEqual([2, 1, 4, 3])
+    })
   });
 });

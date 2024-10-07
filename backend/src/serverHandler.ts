@@ -1,12 +1,12 @@
 import { Server, Socket } from 'socket.io';
 import { Game } from './classes/Game';
 import {
-  onFirstLineUpdate,
   onGameOver,
   onGameStarted,
   onGameStateUpdate,
   onGameWinner,
   onNextPieceUpdate,
+  onSpectrumUpdate,
 } from './GameHandler';
 import { Games } from './server';
 import { createPlayerScore } from './services/playerScoreService';
@@ -23,7 +23,7 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
 
       newGame.on('updateGameState', onGameStateUpdate(io));
 
-      newGame.on('updateFirstLine', onFirstLineUpdate(io, roomName));
+      newGame.on('updateSpectrum', onSpectrumUpdate(io, roomName));
 
       newGame.on('updateNextPiece', onNextPieceUpdate(io));
 
@@ -42,7 +42,7 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
     }
 
     const allOponents = game.getAllOponents(socket.id).map((player) => {
-      return { id: player.id, name: player.name, firstLine: 0 };
+      return { id: player.id, name: player.name, spectrum: [] };
     });
     socket.emit('currentPlayers', allOponents);
 
@@ -52,7 +52,7 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
       socket.to(roomName).emit('playerJoined', {
         id: newPlayer?.id,
         name: newPlayer?.name,
-        firstLine: 0,
+        spectrum: [],
       });
     }
 

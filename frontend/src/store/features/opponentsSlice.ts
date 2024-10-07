@@ -4,6 +4,7 @@ interface OpponentState {
   id: string;
   name: string;
   firstLine: number;
+  spectrum: number[];
 }
 
 // const opponentsSample = [
@@ -57,17 +58,17 @@ const opponentsSlice = createSlice({
         state.splice(index, 1);
       }
     },
-    updateOpponentFirstLine: (
+    updateOpponentSpectrum: (
       state: OpponentState[],
-      action: PayloadAction<{ playerId: string; firstLine: number }>
+      action: PayloadAction<{ playerId: string; spectrum: number[] }>
     ) => {
-      const { playerId, firstLine } = action.payload;
+      const { playerId, spectrum } = action.payload;
       const index = state.findIndex((elem) => elem.id === playerId);
-      state[index] = { ...state[index], firstLine };
+      state[index] = { ...state[index], spectrum};
     },
   },
 });
 
-export const { addOpponent, removeOpponent, updateOpponentFirstLine } =
+export const { addOpponent, removeOpponent, updateOpponentSpectrum} =
   opponentsSlice.actions;
 export default opponentsSlice.reducer;

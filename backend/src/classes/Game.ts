@@ -166,10 +166,10 @@ export class Game extends EventEmitter {
       }
     });
 
-    newPlayer.on('updateFirstLine', () => {
-      this.emit('updateFirstLine', {
+    newPlayer.on('updateSpectrum', () => {
+      this.emit('updateSpectrum', {
         playerId: newPlayer.id,
-        firstLine: newPlayer.firstLine,
+        spectrum: newPlayer.spectrum,
       });
     });
 

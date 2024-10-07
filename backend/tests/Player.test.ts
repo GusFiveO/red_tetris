@@ -1,5 +1,4 @@
 import { Player } from '../src/classes/Player';
-import { getFirstLine } from '../src/classes/utils';
 
 describe('Player unit test suites', () => {
   describe('Basic tests', () => {
@@ -56,9 +55,6 @@ describe('Player unit test suites', () => {
       expect(player.level).toBe(2);
     });
 
-    it('should be 5', () => {
-      expect(getFirstLine(player.field)).toBe(6);
-    });
 
     player.stopGameLoop();
   });

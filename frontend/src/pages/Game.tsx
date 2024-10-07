@@ -9,7 +9,7 @@ import { Spectrum } from '../components/Spectrum';
 import {
   addOpponent,
   removeOpponent,
-  updateOpponentFirstLine,
+  updateOpponentSpectrum,
 } from '../store/features/opponentsSlice';
 import {
   Piece,
@@ -23,12 +23,6 @@ import { Player } from '../types';
 
 const socket = io(import.meta.env.VITE_API_URL);
 export const SocketContext = React.createContext(socket);
-
-export type PlayerSpectrum = {
-  name: string;
-  firstLine: number;
-  score: number;
-};
 
 export type ScoreInfo = {
   name: string;
@@ -85,14 +79,15 @@ export const Game = () => {
       dispatch(updatePlayerScore(score));
     }
 
-    function onUpdateFirstLine(payload: {
+
+    function onUpdateSpectrum(payload: {
       playerId: string;
-      firstLine: number;
+      spectrum: number[];
     }) {
-      const { playerId, firstLine } = payload;
-      console.log('updateFirstLine:', playerId, firstLine);
+      const { playerId, spectrum } = payload;
+      console.log('updateSpectrum:', playerId, spectrum);
       dispatch(
-        updateOpponentFirstLine({ playerId: playerId, firstLine: firstLine })
+        updateOpponentSpectrum({ playerId: playerId, spectrum: spectrum })
       );
     }
 
@@ -129,8 +124,8 @@ export const Game = () => {
     socket.on('playerJoined', onPlayerJoined);
     socket.on('gameAlreadyStarted', onGameAlreadyStarted);
     socket.on('updateGameState', onUpdateGameState);
-    socket.on('updateFirstLine', onUpdateFirstLine);
     socket.on('updateNextPiece', onUpdateNextPiece);
+    socket.on('updateSpectrum', onUpdateSpectrum);
     socket.on('gameStarted', onGameStarted);
     socket.on('gameOver', onGameOver);
     socket.on('gameWin', onGameWin);
@@ -140,8 +135,8 @@ export const Game = () => {
       socket.off('playerJoined', onPlayerJoined);
       socket.off('gameAlreadyStarted', onGameAlreadyStarted);
       socket.off('updateGameState', onUpdateGameState);
-      socket.off('updateFirstLine', onUpdateFirstLine);
       socket.off('updateNextPiece', onUpdateNextPiece);
+      socket.off('updateSpectrum', onUpdateSpectrum);
       socket.off('gameStarted', onGameStarted);
       socket.off('gameOver', onGameOver);
       socket.off('gameWin', onGameWin);
