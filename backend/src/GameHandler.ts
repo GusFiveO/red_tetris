@@ -43,7 +43,6 @@ export const onGameStateUpdate = (io: Server) => {
   };
 };
 
-
 export const onSpectrumUpdate = (io: Server, roomName: string) => {
   return (payload: { playerId: string; spectrum: number[] }) => {
     const { playerId, spectrum } = payload;

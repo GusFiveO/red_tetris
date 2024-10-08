@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { SocketContext } from '../pages/Game';
+import { playerMove } from '../store/actions/socketActions';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { getColorForNumber } from '../utils/gameUtils';
 import NextPiece from './NextPiece';
@@ -28,22 +29,35 @@ export const Field = () => {
       ) {
         event.preventDefault();
       }
+      // if (currentTime - lastKeyPressTime > throttleInterval) {
+      //   if (event.key === 'ArrowUp') {
+      //     console.log(event.key);
+      //     socket.emit('playerMove', { roomName: room, moveType: 'rotate' });
+      //   } else if (event.key === 'ArrowDown') {
+      //     console.log(event.key);
+      //     socket.emit('playerMove', { roomName: room, moveType: 'drop' });
+      //   } else if (event.key === 'ArrowLeft') {
+      //     console.log(event.key);
+      //     socket.emit('playerMove', { roomName: room, moveType: 'left' });
+      //   } else if (event.key === 'ArrowRight') {
+      //     console.log(event.key);
+      //     socket.emit('playerMove', { roomName: room, moveType: 'right' });
+      //   } else if (event.key === ' ') {
+      //     socket.emit('playerMove', { roomName: room, moveType: 'hardDrop' });
+      //     console.log(field);
+      //   }
       if (currentTime - lastKeyPressTime > throttleInterval) {
+        // Dispatch playerMove action instead of using socket.emit
         if (event.key === 'ArrowUp') {
-          console.log(event.key);
-          socket.emit('playerMove', { roomName: room, moveType: 'rotate' });
+          dispatch(playerMove(room, 'rotate'));
         } else if (event.key === 'ArrowDown') {
-          console.log(event.key);
-          socket.emit('playerMove', { roomName: room, moveType: 'drop' });
+          dispatch(playerMove(room, 'drop'));
         } else if (event.key === 'ArrowLeft') {
-          console.log(event.key);
-          socket.emit('playerMove', { roomName: room, moveType: 'left' });
+          dispatch(playerMove(room, 'left'));
         } else if (event.key === 'ArrowRight') {
-          console.log(event.key);
-          socket.emit('playerMove', { roomName: room, moveType: 'right' });
+          dispatch(playerMove(room, 'right'));
         } else if (event.key === ' ') {
-          socket.emit('playerMove', { roomName: room, moveType: 'hardDrop' });
-          console.log(field);
+          dispatch(playerMove(room, 'hardDrop'));
         }
 
         lastKeyPressTime = currentTime;

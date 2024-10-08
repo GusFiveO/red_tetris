@@ -1,57 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Player } from '../../types';
 
-interface OpponentState {
-  id: string;
-  name: string;
-  firstLine: number;
-  spectrum: number[];
-}
-
-// const opponentsSample = [
-//   { name: 'Player 1', firstLine: 2 },
-//   { name: 'Player 2', firstLine: 5 },
-//   { name: 'Player 3', firstLine: 8 },
-//   { name: 'Player 4', firstLine: 11 },
-//   { name: 'Player 5', firstLine: 14 },
-//   { name: 'Player 6', firstLine: 2 },
-//   { name: 'Player 7', firstLine: 5 },
-//   { name: 'Player 8', firstLine: 8 },
-//   { name: 'Player 9', firstLine: 11 },
-//   { name: 'Player 10', firstLine: 15 },
-//   { name: 'Player 8', firstLine: 8 },
-//   { name: 'Player 9', firstLine: 11 },
-//   { name: 'Player 10', firstLine: 15 },
-//   { name: 'Player 8', firstLine: 8 },
-//   { name: 'Player 9', firstLine: 11 },
-//   { name: 'Player 10', firstLine: 15 },
-//   { name: 'Player 8', firstLine: 8 },
-//   { name: 'Player 9', firstLine: 11 },
-//   { name: 'Player 10', firstLine: 15 },
-//   { name: 'Player 8', firstLine: 8 },
-//   { name: 'Player 9', firstLine: 11 },
-//   { name: 'Player 10', firstLine: 15 },
-//   { name: 'Player 8', firstLine: 8 },
-//   { name: 'Player 9', firstLine: 11 },
-//   { name: 'Player 10', firstLine: 15 },
-// ];
-
-// const initialState: OpponentState[] = opponentsSample;
-const initialState: OpponentState[] = [];
+const initialState: Player[] = [];
 
 const opponentsSlice = createSlice({
   name: 'opponents',
   initialState,
   reducers: {
-    addOpponent: (
-      state: OpponentState[],
-      action: PayloadAction<OpponentState>
-    ) => {
+    addOpponent: (state: Player[], action: PayloadAction<Player>) => {
       if (!action.payload) return;
       const player = state.find((elem) => elem.id == action.payload.id);
       if (!player) state.push(action.payload); // check if the player is already present
     },
-    removeOpponent: (state: OpponentState[], action: PayloadAction<string>) => {
-      const index = state.findIndex((opponent: OpponentState) => {
+    removeOpponent: (state: Player[], action: PayloadAction<string>) => {
+      const index = state.findIndex((opponent: Player) => {
         return opponent.id == action.payload;
       });
       if (index > -1) {
@@ -59,16 +21,16 @@ const opponentsSlice = createSlice({
       }
     },
     updateOpponentSpectrum: (
-      state: OpponentState[],
+      state: Player[],
       action: PayloadAction<{ playerId: string; spectrum: number[] }>
     ) => {
       const { playerId, spectrum } = action.payload;
       const index = state.findIndex((elem) => elem.id === playerId);
-      state[index] = { ...state[index], spectrum};
+      state[index] = { ...state[index], spectrum };
     },
   },
 });
 
-export const { addOpponent, removeOpponent, updateOpponentSpectrum} =
+export const { addOpponent, removeOpponent, updateOpponentSpectrum } =
   opponentsSlice.actions;
 export default opponentsSlice.reducer;

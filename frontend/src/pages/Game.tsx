@@ -7,19 +7,12 @@ import Modal from '../components/Modal';
 import ModalButton from '../components/ModalButton';
 import { Spectrum } from '../components/Spectrum';
 import {
-  addOpponent,
-  removeOpponent,
-  updateOpponentSpectrum,
-} from '../store/features/opponentsSlice';
-import {
-  Piece,
-  updatePlayerField,
-  updatePlayerNextPiece,
-  updatePlayerScore,
-} from '../store/features/playerSlice';
+  connectSocket,
+  disconnectSocket,
+  emitSocketEvent,
+} from '../store/actions/socketActions';
 import { useAppDispatch } from '../store/store';
 import '../styles/custom-utilities.css';
-import { Player } from '../types';
 
 const socket = io(import.meta.env.VITE_API_URL);
 export const SocketContext = React.createContext(socket);
@@ -46,110 +39,123 @@ export const Game = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    socket.emit('joinRoom', room, playerName);
-
-    console.log('Use effect');
-    function onCurrentPlayers(players: Player[]) {
-      console.log('currentPlayers: ', players);
-      players.forEach((player) => dispatch(addOpponent(player)));
-    }
-
-    function onPlayerJoined(player: Player) {
-      console.log('playerJoined: ', player);
-      dispatch(addOpponent(player));
-    }
-
-    function onPlayerLeaved(playerId: string) {
-      console.log('playerLeaved: ', playerId);
-      dispatch(removeOpponent(playerId));
-    }
-
-    function onGameAlreadyStarted(message: string) {
-      setGameState(GameState.InGame);
-      setModalText(message);
-    }
-
-    function onUpdateGameState(payload: {
-      field: number[][];
-      score: number;
-      piece: Piece;
-    }) {
-      const { field, score, piece } = payload;
-      dispatch(updatePlayerField({ field: field, piece: piece }));
-      dispatch(updatePlayerScore(score));
-    }
-
-
-    function onUpdateSpectrum(payload: {
-      playerId: string;
-      spectrum: number[];
-    }) {
-      const { playerId, spectrum } = payload;
-      console.log('updateSpectrum:', playerId, spectrum);
+    if (room && playerName) {
       dispatch(
-        updateOpponentSpectrum({ playerId: playerId, spectrum: spectrum })
+        connectSocket(import.meta.env.VITE_API_URL as string, room, playerName)
       );
     }
 
-    function onUpdateNextPiece(payload: { nextPiece: Piece }) {
-      const { nextPiece } = payload;
-      console.log('updateNextPiece:', nextPiece);
-      dispatch(updatePlayerNextPiece(nextPiece));
-    }
-
-    function onGameStarted() {
-      if (gameState !== GameState.InGame) {
-        setGameState(GameState.InGame);
-      }
-      setIsReady(false);
-    }
-
-    function onGameOver(payload: { message: string }) {
-      const { message } = payload;
-      setGameState(GameState.GameOver);
-      // alert(message);
-      setModalText(message);
-    }
-
-    function onGameWin(payload: { message: string }) {
-      const { message } = payload;
-      setGameState(GameState.GameWin);
-      // alert(message);
-
-      setModalText(message);
-    }
-
-    socket.on('currentPlayers', onCurrentPlayers);
-    socket.on('playerLeaved', onPlayerLeaved);
-    socket.on('playerJoined', onPlayerJoined);
-    socket.on('gameAlreadyStarted', onGameAlreadyStarted);
-    socket.on('updateGameState', onUpdateGameState);
-    socket.on('updateNextPiece', onUpdateNextPiece);
-    socket.on('updateSpectrum', onUpdateSpectrum);
-    socket.on('gameStarted', onGameStarted);
-    socket.on('gameOver', onGameOver);
-    socket.on('gameWin', onGameWin);
     return () => {
-      socket.off('currentPlayers', onCurrentPlayers);
-      socket.off('playerLeaved', onPlayerLeaved);
-      socket.off('playerJoined', onPlayerJoined);
-      socket.off('gameAlreadyStarted', onGameAlreadyStarted);
-      socket.off('updateGameState', onUpdateGameState);
-      socket.off('updateNextPiece', onUpdateNextPiece);
-      socket.off('updateSpectrum', onUpdateSpectrum);
-      socket.off('gameStarted', onGameStarted);
-      socket.off('gameOver', onGameOver);
-      socket.off('gameWin', onGameWin);
+      dispatch(disconnectSocket());
     };
-  }, [dispatch]);
+  }, [dispatch, room, playerName]);
+
+  // useEffect(() => {
+  //   socket.emit('joinRoom', room, playerName);
+
+  //   console.log('Use effect');
+  //   function onCurrentPlayers(players: Player[]) {
+  //     console.log('currentPlayers: ', players);
+  //     players.forEach((player) => dispatch(addOpponent(player)));
+  //   }
+
+  //   function onPlayerJoined(player: Player) {
+  //     console.log('playerJoined: ', player);
+  //     dispatch(addOpponent(player));
+  //   }
+
+  //   function onPlayerLeaved(playerId: string) {
+  //     console.log('playerLeaved: ', playerId);
+  //     dispatch(removeOpponent(playerId));
+  //   }
+
+  //   function onGameAlreadyStarted(message: string) {
+  //     setGameState(GameState.InGame);
+  //     setModalText(message);
+  //   }
+
+  //   function onUpdateGameState(payload: {
+  //     field: number[][];
+  //     score: number;
+  //     piece: Piece;
+  //   }) {
+  //     const { field, score, piece } = payload;
+  //     dispatch(updatePlayerField({ field: field, piece: piece }));
+  //     dispatch(updatePlayerScore(score));
+  //   }
+
+  //   function onUpdateSpectrum(payload: {
+  //     playerId: string;
+  //     spectrum: number[];
+  //   }) {
+  //     const { playerId, spectrum } = payload;
+  //     console.log('updateSpectrum:', playerId, spectrum);
+  //     dispatch(
+  //       updateOpponentSpectrum({ playerId: playerId, spectrum: spectrum })
+  //     );
+  //   }
+
+  //   function onUpdateNextPiece(payload: { nextPiece: Piece }) {
+  //     const { nextPiece } = payload;
+  //     console.log('updateNextPiece:', nextPiece);
+  //     dispatch(updatePlayerNextPiece(nextPiece));
+  //   }
+
+  //   function onGameStarted() {
+  //     if (gameState !== GameState.InGame) {
+  //       setGameState(GameState.InGame);
+  //     }
+  //     setIsReady(false);
+  //   }
+
+  //   function onGameOver(payload: { message: string }) {
+  //     const { message } = payload;
+  //     setGameState(GameState.GameOver);
+  //     // alert(message);
+  //     setModalText(message);
+  //   }
+
+  //   function onGameWin(payload: { message: string }) {
+  //     const { message } = payload;
+  //     setGameState(GameState.GameWin);
+  //     // alert(message);
+
+  //     setModalText(message);
+  //   }
+
+  //   socket.on('currentPlayers', onCurrentPlayers);
+  //   socket.on('playerLeaved', onPlayerLeaved);
+  //   socket.on('playerJoined', onPlayerJoined);
+  //   socket.on('gameAlreadyStarted', onGameAlreadyStarted);
+  //   socket.on('updateGameState', onUpdateGameState);
+  //   socket.on('updateNextPiece', onUpdateNextPiece);
+  //   socket.on('updateSpectrum', onUpdateSpectrum);
+  //   socket.on('gameStarted', onGameStarted);
+  //   socket.on('gameOver', onGameOver);
+  //   socket.on('gameWin', onGameWin);
+  //   return () => {
+  //     socket.off('currentPlayers', onCurrentPlayers);
+  //     socket.off('playerLeaved', onPlayerLeaved);
+  //     socket.off('playerJoined', onPlayerJoined);
+  //     socket.off('gameAlreadyStarted', onGameAlreadyStarted);
+  //     socket.off('updateGameState', onUpdateGameState);
+  //     socket.off('updateNextPiece', onUpdateNextPiece);
+  //     socket.off('updateSpectrum', onUpdateSpectrum);
+  //     socket.off('gameStarted', onGameStarted);
+  //     socket.off('gameOver', onGameOver);
+  //     socket.off('gameWin', onGameWin);
+  //   };
+  // }, [dispatch]);
 
   function leaveRoom() {
-    socket.emit('leaveRoom');
+    // socket.emit('leaveRoom');
+    dispatch(emitSocketEvent('leaveRoom'));
     navigate('/');
   }
 
   function changeReadyState(roomName: string | undefined, newState: boolean) {
-    socket.emit('playerReady', { roomName, newState });
+    // socket.emit('playerReady', { roomName, newState });
+    dispatch(emitSocketEvent('playerReady', { roomName: room, newState }));
     setIsReady(newState);
     console.log(`player ${newState ? 'not ready' : 'ready'}`);
   }
