@@ -3,6 +3,12 @@ import { Middleware } from '@reduxjs/toolkit';
 import { io, Socket } from 'socket.io-client';
 import { Piece, Player } from '../types';
 import {
+  GameState,
+  setGameState,
+  setIsOwner,
+  setIsRunning,
+} from './features/gameSlice';
+import {
   addOpponent,
   removeOpponent,
   updateOpponentSpectrum,
@@ -52,6 +58,12 @@ export const socketMiddleware: Middleware = (store) => {
         socket.emit('joinRoom', action.payload.room, action.payload.playerName);
 
         // Socket event listeners
+
+        socket.on('owner', () => {
+          console.log('OWNER');
+          store.dispatch(setIsOwner(true));
+        });
+
         socket.on('currentPlayers', (players: Player[]) => {
           players.forEach((player) => store.dispatch(addOpponent(player)));
         });
@@ -89,12 +101,26 @@ export const socketMiddleware: Middleware = (store) => {
           }
         );
 
+        socket.on('gameStarted', () => {
+          store.dispatch(setGameState(GameState.InGame));
+          store.dispatch(setIsRunning(true));
+        });
+
+        socket.on('gameEnded', () => {
+          store.dispatch(setGameState(GameState.InLobby));
+          store.dispatch(setIsRunning(false));
+        });
+
         socket.on('gameOver', (message: string) => {
+          console.log('GAME OVER');
           store.dispatch({ type: 'GAME_OVER', payload: message });
+          store.dispatch(setGameState(GameState.GameOver));
         });
 
         socket.on('gameWin', (message: string) => {
+          console.log('GAME WIN');
           store.dispatch({ type: 'GAME_WIN', payload: message });
+          store.dispatch(setGameState(GameState.GameWin));
         });
         break;
 

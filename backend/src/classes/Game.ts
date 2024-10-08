@@ -7,17 +7,20 @@ interface Players {
 }
 
 export class Game extends EventEmitter {
+  ownerId: string;
   roomName: string;
   players: Players;
   started: boolean;
   tetrominoSequence: string[];
 
-  constructor(roomName: string) {
+  constructor(ownerId: string, roomName: string) {
     super();
+    this.ownerId = ownerId;
     this.roomName = roomName;
     this.players = {};
-    this.started = false;
     this.tetrominoSequence = this.generateTetrominoSequence();
+    // this.addPlayer(owner);
+    this.started = false;
   }
   // INITIALIZATION
 
@@ -46,6 +49,7 @@ export class Game extends EventEmitter {
     this.started = true;
     this.emit('gameStarted');
     for (const player of Object.values(this.players)) {
+      console.log(player.name, player.gameOver);
       player.startGameLoop();
       this.emit('updateNextPiece', {
         playerId: player.id,
@@ -62,19 +66,17 @@ export class Game extends EventEmitter {
   }
 
   // PLAYER RELATED METHODS
-  addPlayer(playerId: string, playerName: string) {
-    if (!this.players[playerId]) {
-      const newPlayer = new Player(playerId, playerName, [
-        ...this.tetrominoSequence,
-      ]);
+  addPlayer(player: Player) {
+    if (!this.players[player.id]) {
+      player.tetrominoSequence = [...this.tetrominoSequence];
 
-      this.playerEventHandler(newPlayer);
+      this.playerEventHandler(player);
 
-      console.log(`Player ${playerName} join the game ${this.roomName}`);
-      this.players[playerId] = newPlayer;
-      return this.players[playerId];
+      console.log(`Player ${player.name} join the game ${this.roomName}`);
+      this.players[player.id] = player;
+      return this.players[player.id];
     } else {
-      return this.players[playerId];
+      return this.players[player.id];
     }
   }
 
@@ -128,13 +130,12 @@ export class Game extends EventEmitter {
     const playerId = newPlayer.id;
 
     newPlayer.on('gameOver', () => {
+      const winner = this.getWinner();
       this.emit('gameOver', {
         playerId: playerId,
         playerName: newPlayer.name,
         playerScore: newPlayer.score,
       });
-      this.players[playerId].gameOver = true;
-      const winner = this.getWinner();
       if (winner) {
         this.stop();
         this.emit('gameWinner', {

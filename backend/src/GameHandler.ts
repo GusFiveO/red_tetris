@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
+import { Game } from './classes/Game';
 import { Matrix } from './classes/utils';
-import { Games } from './server';
 import { createPlayerScore } from './services/playerScoreService';
 
 interface Piece {
@@ -14,7 +14,7 @@ export const onGameStarted = (io: Server, roomName: string) => {
   };
 };
 
-export const onGameOver = (io: Server) => {
+export const onGameOver = (io: Server, game: Game) => {
   return (payload: {
     playerId: string;
     playerName: string;
@@ -23,6 +23,7 @@ export const onGameOver = (io: Server) => {
     const { playerId, playerName, playerScore } = payload;
     console.log('Game Over');
     io.to(playerId).emit('gameOver', { message: 'You lost!' });
+    game.players[playerId].reset([...game.tetrominoSequence]);
     createPlayerScore({ name: playerName, score: playerScore });
   };
 };
@@ -66,7 +67,7 @@ export const onNextPieceUpdate = (io: Server) => {
 export const onGameWinner = (
   io: Server,
   socket: Socket,
-  games: Games,
+  game: Game,
   roomName: string
 ) => {
   return (payload: {
@@ -76,10 +77,8 @@ export const onGameWinner = (
   }) => {
     const { playerId, playerName, playerScore } = payload;
     io.to(playerId).emit('gameWin', { message: 'You win!' });
-    console.log('disconnect');
-    // socket.disconnect();
-    io.sockets.sockets.get(playerId)?.disconnect();
-    delete games[roomName];
+    io.to(roomName).emit('gameEnded');
+    game.players[playerId].reset([...game.tetrominoSequence]);
     createPlayerScore({ name: playerName, score: playerScore });
   };
 };

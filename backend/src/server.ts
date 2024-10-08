@@ -8,6 +8,7 @@ import { playerScoreRouter } from './routes/playerScore';
 import {
   addPlayer,
   onLeaveRoom,
+  onPlayAgain,
   onPlayerMove,
   onPlayerReady,
   onStartGame,
@@ -52,7 +53,9 @@ io.on('connection', (socket: Socket) => {
   console.log(`New socket connection ${socket.id}`);
   socket.on('joinRoom', addPlayer(io, socket, games));
 
-  socket.on('startGame', onStartGame(games));
+  socket.on('startGame', onStartGame(socket, games));
+
+  socket.on('playAgain', onPlayAgain(socket, games));
 
   socket.on('playerReady', onPlayerReady(io, games, socket));
 

@@ -71,7 +71,7 @@ export const Field = () => {
     };
   }, [dispatch, field]);
 
-  const fieldComponent = useMemo(() => {
+  const createGrid = (field: number[][]) => {
     return field.map((row, rowIndex) => (
       <div key={rowIndex} className='flex'>
         {row.map((elem, colIndex) => (
@@ -82,6 +82,10 @@ export const Field = () => {
         ))}
       </div>
     ));
+  };
+
+  const fieldComponent = useMemo(() => {
+    return createGrid(field);
   }, [field]);
 
   return (

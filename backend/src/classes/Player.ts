@@ -100,10 +100,27 @@ export class Player extends EventEmitter {
     return new Piece(TETROMINOS[this.tetrominoSequence[0]]);
   }
 
+  reset(tetrominoSequence: string[]) {
+    this.field = generateZerosMatrix(20, 10);
+    this.score = 0;
+    this.level = 1;
+    this.linesCleared = 0;
+    this.ready = false;
+    this.gameOver = false;
+    this.pieceDropInterval = 1000;
+    this.tetrominoSequence = tetrominoSequence;
+    console.log(tetrominoSequence);
+    this.currentPiece = this.generateNewPiece();
+    this.spectrum = [];
+    this.pendingPenality = [];
+  }
+
   // GAME LOOP
   startGameLoop() {
+    console.log(this.tetrominoSequence);
     this.stopGameLoop();
     this.emit('updateGameState');
+    this.emit('updateSpectrum');
 
     const intervalTime = this.pieceDropInterval;
 
@@ -111,6 +128,7 @@ export class Player extends EventEmitter {
       this.dropPiece();
       if (this.gameOver) {
         this.emit('gameOver');
+        this.stopGameLoop();
       }
     }, intervalTime);
   }
@@ -197,15 +215,14 @@ export class Player extends EventEmitter {
     this.currentPiece = this.generateNewPiece();
     if (this.hasLost()) {
       this.gameOver = true;
-      // this.emit('gameOver');
     }
 
     const spectrum = getSpectrum(this.field);
-    console.log('spectrum:', spectrum)
+    console.log('spectrum:', spectrum);
     if (this.spectrum != spectrum) {
-      this.spectrum = spectrum
-      console.log('updateSpectrum')
-      this.emit('updateSpectrum')
+      this.spectrum = spectrum;
+      console.log('updateSpectrum');
+      this.emit('updateSpectrum');
     }
   }
 
@@ -277,6 +294,7 @@ export class Player extends EventEmitter {
             this.field[fieldY]?.[fieldX] != 0 ||
             this.field[fieldY]?.[fieldX] < 0
           ) {
+            console.log('COLLIDES');
             return true;
           }
         }

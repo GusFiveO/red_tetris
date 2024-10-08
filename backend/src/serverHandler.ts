@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { Game } from './classes/Game';
+import { Player } from './classes/Player';
 import {
   onGameOver,
   onGameStarted,
@@ -15,11 +16,11 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
   return (roomName: string, playerName: string) => {
     if (!games[roomName]) {
       console.log(`joinRoom: ${roomName}`);
-      const newGame = new Game(roomName);
+      const newGame = new Game(socket.id, roomName);
 
       newGame.on('gameStarted', onGameStarted(io, roomName));
 
-      newGame.on('gameOver', onGameOver(io));
+      newGame.on('gameOver', onGameOver(io, newGame));
 
       newGame.on('updateGameState', onGameStateUpdate(io));
 
@@ -27,12 +28,14 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
 
       newGame.on('updateNextPiece', onNextPieceUpdate(io));
 
-      newGame.on('gameWinner', onGameWinner(io, socket, games, roomName));
+      newGame.on('gameWinner', onGameWinner(io, socket, newGame, roomName));
 
       games[roomName] = newGame;
+      socket.emit('owner');
     }
 
     const game = games[roomName];
+    const newPlayer = new Player(socket.id, playerName, game.tetrominoSequence);
     if (game.isStarted()) {
       socket.emit(
         'gameAlreadyStarted',
@@ -46,7 +49,7 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
     });
     socket.emit('currentPlayers', allOponents);
 
-    const newPlayer = game.addPlayer(socket.id, playerName);
+    game.addPlayer(newPlayer);
 
     if (newPlayer) {
       socket.to(roomName).emit('playerJoined', {
@@ -60,14 +63,27 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
   };
 };
 
-export const onStartGame = (games: Games) => {
+export const onStartGame = (socket: Socket, games: Games) => {
   return (roomName: string) => {
     const game = games[roomName];
 
-    if (game) {
+    if (game && game.ownerId === socket.id) {
       game.start();
+      console.log(`Game ${roomName} started`);
     }
-    console.log(`Game ${roomName} started`);
+  };
+};
+
+export const onPlayAgain = (socket: Socket, games: Games) => {
+  return (roomName: string) => {
+    const game = games[roomName];
+    if (!game || game.ownerId !== socket.id) {
+      return;
+    }
+    for (let player of Object.values(game.players)) {
+      player.reset(game.tetrominoSequence);
+    }
+    game.start();
   };
 };
 
@@ -106,24 +122,31 @@ export const onPlayerMove = (socket: Socket, games: Games) => {
 export const onLeaveRoom = (io: Server, socket: Socket, games: Games) => {
   return () => {
     console.log(`Player leaved ${socket.id}`);
-
     for (const roomName in games) {
+      const game = games[roomName];
       console.log('leaving while started');
-      if (games[roomName].hasPlayer(socket.id)) {
-        games[roomName].removePlayer(socket.id);
+      if (game.hasPlayer(socket.id)) {
+        game.removePlayer(socket.id);
         socket.to(roomName).emit('playerLeaved', socket.id);
-        if (games[roomName].isEmpty()) {
+        if (game.isEmpty()) {
           delete games[roomName];
-        } else if (games[roomName].started == true) {
-          const remainingPlayer = Object.values(games[roomName].players);
-          if (remainingPlayer.length == 1) {
-            const winner = remainingPlayer[0];
-            winner.stopGameLoop();
-            games[roomName].started = false;
-            delete games[roomName];
-            io.to(winner.id).emit('gameWin', { message: 'You win!' });
-            io.sockets.sockets.get(winner.id)?.disconnect();
-            createPlayerScore({ name: winner.name, score: winner.score });
+        } else {
+          if (game.started == true) {
+            const remainingPlayer = Object.values(game.players);
+            if (remainingPlayer.length == 1) {
+              const winner = remainingPlayer[0];
+              winner.stopGameLoop();
+              game.started = false;
+              delete games[roomName];
+              io.to(winner.id).emit('gameWin', { message: 'You win!' });
+              io.sockets.sockets.get(winner.id)?.disconnect();
+              createPlayerScore({ name: winner.name, score: winner.score });
+            }
+          }
+          if (game.ownerId === socket.id) {
+            const newOwner = Object.values(game.players)[0];
+            game.ownerId = newOwner.id;
+            io.to(newOwner.id).emit('owner');
           }
         }
         socket.disconnect();
