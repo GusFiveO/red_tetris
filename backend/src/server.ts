@@ -8,7 +8,6 @@ import { playerScoreRouter } from './routes/playerScore';
 import {
   addPlayer,
   onLeaveRoom,
-  onPlayAgain,
   onPlayerMove,
   onStartGame,
 } from './serverHandler';
@@ -54,7 +53,7 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('startGame', onStartGame(socket, games));
 
-  socket.on('playAgain', onPlayAgain(socket, games));
+  // socket.on('playAgain', onPlayAgain(socket, games));
 
   socket.on('playerMove', onPlayerMove(socket, games));
 

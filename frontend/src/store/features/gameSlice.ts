@@ -12,12 +12,14 @@ type GameSliceState = {
   gameState: GameState;
   isOwner: boolean;
   isRunning: boolean;
+  level: number;
 };
 
 const initialState: GameSliceState = {
   gameState: GameState.InLobby, // Initially in the lobby
   isOwner: false, // Initially, the player is not the owner
   isRunning: false,
+  level: 1,
 };
 
 const gameReducer = createSlice({
@@ -33,8 +35,12 @@ const gameReducer = createSlice({
     setIsRunning: (state, action: PayloadAction<boolean>) => {
       state.isRunning = action.payload;
     },
+    setStartingLevel: (state, action: PayloadAction<number>) => {
+      state.level = action.payload;
+    },
   },
 });
 
-export const { setGameState, setIsOwner, setIsRunning } = gameReducer.actions;
+export const { setGameState, setIsOwner, setIsRunning, setStartingLevel } =
+  gameReducer.actions;
 export default gameReducer.reducer;

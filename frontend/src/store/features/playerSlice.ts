@@ -101,7 +101,6 @@ const playerSlice = createSlice({
         row.map((cell) => (cell === 0 ? 0 : cell + 10))
       );
 
-      console.log(shadow.matrix);
       state.field = mergeField(action.payload.field, shadow);
       state.field = mergeField(state.field, action.payload.piece);
     },

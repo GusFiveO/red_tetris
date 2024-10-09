@@ -67,28 +67,29 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
 };
 
 export const onStartGame = (socket: Socket, games: Games) => {
-  return (roomName: string) => {
+  return (payload: { roomName: string; level: number }) => {
+    const { roomName, level } = payload;
     const game = games[roomName];
 
     if (game && game.ownerId === socket.id) {
-      game.start();
+      game.start(level);
       console.log(`Game ${roomName} started`);
     }
   };
 };
 
-export const onPlayAgain = (socket: Socket, games: Games) => {
-  return (roomName: string) => {
-    const game = games[roomName];
-    if (!game || game.ownerId !== socket.id) {
-      return;
-    }
-    for (let player of Object.values(game.players)) {
-      player.reset(game.tetrominoSequence);
-    }
-    game.start();
-  };
-};
+// export const onPlayAgain = (socket: Socket, games: Games) => {
+//   return (roomName: string) => {
+//     const game = games[roomName];
+//     if (!game || game.ownerId !== socket.id) {
+//       return;
+//     }
+//     for (let player of Object.values(game.players)) {
+//       player.reset(game.tetrominoSequence);
+//     }
+//     game.start();
+//   };
+// };
 
 export const onPlayerMove = (socket: Socket, games: Games) => {
   return (moveData: { roomName: string; moveType: string }) => {
@@ -118,10 +119,12 @@ export const onLeaveRoom = (io: Server, socket: Socket, games: Games) => {
               const winner = remainingPlayer[0];
               winner.stopGameLoop();
               game.started = false;
-              delete games[roomName];
+              // delete games[roomName];
               io.to(winner.id).emit('gameWin', { message: 'You win!' });
-              io.sockets.sockets.get(winner.id)?.disconnect();
+              // io.sockets.sockets.get(winner.id)?.disconnect();
+              io.to(roomName).emit('gameEnded');
               createPlayerScore({ name: winner.name, score: winner.score });
+              winner.reset([...game.tetrominoSequence]);
             }
           }
           if (game.ownerId === socket.id) {

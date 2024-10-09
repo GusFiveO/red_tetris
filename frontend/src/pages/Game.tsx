@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
+import { LevelSelector } from '../components/LevelSelector';
 import { Spectrum } from '../components/Spectrum';
 import {
   connectSocket,
@@ -24,9 +25,12 @@ export type ScoreInfo = {
 export const Game = () => {
   const { room, playerName } = useParams();
 
+  // const [selectedLevel, setSelectedLevel] = useState<number>(1);
+
   const gameState = useAppSelector((state: RootState) => state.game.gameState);
   const isRunning = useAppSelector((state: RootState) => state.game.isRunning);
   const isOwner = useAppSelector((state: RootState) => state.game.isOwner);
+  const startLevel = useAppSelector((state: RootState) => state.game.level);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -49,10 +53,10 @@ export const Game = () => {
   }
 
   function startGame(roomName: string | undefined) {
-    dispatch(emitSocketEvent('startGame', roomName));
+    dispatch(
+      emitSocketEvent('startGame', { roomName: roomName, level: startLevel })
+    );
   }
-
-  console.log(room, playerName);
 
   return (
     <div className='main-container flex justify-center items-center'>
@@ -66,7 +70,11 @@ export const Game = () => {
       </div>
       <div className='w-[45%] flex flex-col items-end'>
         {!isRunning && isOwner ? (
-          <Button onClick={() => startGame(room)}>start</Button>
+          <div className='flex flex-col items-center'>
+            {/* <LevelSelector onChangeLevel={handleLevelChange} /> */}
+            <LevelSelector />
+            <Button onClick={() => startGame(room)}>start</Button>
+          </div>
         ) : null}
       </div>
       <div className='w-2/3 flex  items-center'>

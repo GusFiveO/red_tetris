@@ -13,7 +13,7 @@ describe('Game unit test suites', () => {
   game.addPlayer(player2);
   const player3 = new Player('3', 'testPlayer3', [...game.tetrominoSequence]);
   game.addPlayer(player3);
-  game.start();
+  game.start(1);
 
   game.removePlayer('2');
 

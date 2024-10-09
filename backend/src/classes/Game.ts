@@ -44,12 +44,16 @@ export class Game extends EventEmitter {
     return Object.keys(this.players).length === 0;
   }
 
-  start() {
+  start(level: number) {
     this.started = true;
     this.emit('gameStarted');
+    console.log('start level:', level);
     for (const player of Object.values(this.players)) {
+      player.level = level;
+      player.linesCleared = (level - 1) * 10;
       player.gameOver = false;
-      player.startGameLoop();
+      // player.startGameLoop();
+      player.updateDropInterval();
     }
   }
 

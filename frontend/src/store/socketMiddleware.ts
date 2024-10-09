@@ -41,7 +41,6 @@ export const socketMiddleware: Middleware = (store) => {
         // Socket event listeners
 
         socket.on('owner', () => {
-          console.log('OWNER');
           store.dispatch(setIsOwner(true));
         });
 
@@ -88,19 +87,16 @@ export const socketMiddleware: Middleware = (store) => {
         });
 
         socket.on('gameEnded', () => {
-          console.log('GAME ENDED');
           store.dispatch(setIsRunning(false));
           // store.dispatch(setGameState(GameState.InLobby));
         });
 
         socket.on('gameOver', (message: string) => {
-          console.log('GAME OVER');
           store.dispatch({ type: 'GAME_OVER', payload: message });
           store.dispatch(setGameState(GameState.GameOver));
         });
 
         socket.on('gameWin', (message: string) => {
-          console.log('GAME WIN');
           store.dispatch({ type: 'GAME_WIN', payload: message });
           store.dispatch(setGameState(GameState.GameWin));
         });

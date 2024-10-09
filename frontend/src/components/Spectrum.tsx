@@ -8,15 +8,12 @@ const ROWS = 20;
 
 export const Spectrum = () => {
   const opponentList = useAppSelector((state: RootState) => state.opponents);
-  // const id = useAppSelector((state: RootState) => state.player.id);
-
-  // console.log('id:', id);
 
   const opponentsComponent = [...opponentList]
     .sort((a, b) => {
       return a.score < b.score ? 1 : 0;
     })
-    .map(({ name, spectrum},  index) => {
+    .map(({ name, spectrum }, index) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
         <div
@@ -33,7 +30,10 @@ export const Spectrum = () => {
                   <div
                     key={colIndex}
                     className={`spectre-block ${
-                      (spectrum.length != 0 && ROWS - rowIndex <= spectrum[colIndex]) ? 'bg-black' : 'bg-gray-600'
+                      spectrum.length != 0 &&
+                      ROWS - rowIndex <= spectrum[colIndex]
+                        ? 'bg-black'
+                        : 'bg-gray-600'
                     }`}
                   ></div>
                 ))}
@@ -44,9 +44,9 @@ export const Spectrum = () => {
       );
     });
 
-  return (
+  return opponentList.length !== 0 ? (
     <div className='info-container max-h-[50%] scrollbar-hide overflow-y-scroll w-fit'>
       {opponentsComponent}
     </div>
-  );
+  ) : null;
 };
