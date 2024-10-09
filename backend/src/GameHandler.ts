@@ -21,10 +21,15 @@ export const onGameOver = (io: Server, game: Game) => {
     playerScore: number;
   }) => {
     const { playerId, playerName, playerScore } = payload;
-    console.log('Game Over');
     io.to(playerId).emit('gameOver', { message: 'You lost!' });
-    game.players[playerId].reset([...game.tetrominoSequence]);
     createPlayerScore({ name: playerName, score: playerScore });
+    if (
+      Object.values(game.players).every((player) => player.gameOver === true)
+    ) {
+      game.started = false;
+      io.to(game.roomName).emit('gameEnded');
+    }
+    game.players[playerId].reset([...game.tetrominoSequence]);
   };
 };
 
@@ -57,7 +62,6 @@ export const onSpectrumUpdate = (io: Server, roomName: string) => {
 export const onNextPieceUpdate = (io: Server) => {
   return (payload: { playerId: string; nextPiece: Piece }) => {
     const { playerId, nextPiece } = payload;
-    console.log(`${playerId} UPDATE NEXT PIECE ${nextPiece.matrix}`);
     io.to(playerId).emit('updateNextPiece', {
       nextPiece: nextPiece,
     });
@@ -78,6 +82,7 @@ export const onGameWinner = (
     const { playerId, playerName, playerScore } = payload;
     io.to(playerId).emit('gameWin', { message: 'You win!' });
     io.to(roomName).emit('gameEnded');
+    game.started = false;
     game.players[playerId].reset([...game.tetrominoSequence]);
     createPlayerScore({ name: playerName, score: playerScore });
   };

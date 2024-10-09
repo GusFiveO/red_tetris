@@ -29,23 +29,6 @@ export const Field = () => {
       ) {
         event.preventDefault();
       }
-      // if (currentTime - lastKeyPressTime > throttleInterval) {
-      //   if (event.key === 'ArrowUp') {
-      //     console.log(event.key);
-      //     socket.emit('playerMove', { roomName: room, moveType: 'rotate' });
-      //   } else if (event.key === 'ArrowDown') {
-      //     console.log(event.key);
-      //     socket.emit('playerMove', { roomName: room, moveType: 'drop' });
-      //   } else if (event.key === 'ArrowLeft') {
-      //     console.log(event.key);
-      //     socket.emit('playerMove', { roomName: room, moveType: 'left' });
-      //   } else if (event.key === 'ArrowRight') {
-      //     console.log(event.key);
-      //     socket.emit('playerMove', { roomName: room, moveType: 'right' });
-      //   } else if (event.key === ' ') {
-      //     socket.emit('playerMove', { roomName: room, moveType: 'hardDrop' });
-      //     console.log(field);
-      //   }
       if (currentTime - lastKeyPressTime > throttleInterval) {
         // Dispatch playerMove action instead of using socket.emit
         if (event.key === 'ArrowUp') {

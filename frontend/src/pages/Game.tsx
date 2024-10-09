@@ -78,6 +78,12 @@ export const Game = () => {
           <Field />
         </SocketContext.Provider>
         <Spectrum />
+        {gameState === GameState.GameOver ? (
+          <div className='fixed inset-0 z-50 flex items-center justify-center'>
+            {/* <div className='fixed inset-0 bg-gray-900 opacity-80'></div> */}
+            <div className='info-container z-50 p-2'>GAME OVER</div>
+          </div>
+        ) : null}
         {modalText === null ? null : (
           <Modal>
             {modalText}

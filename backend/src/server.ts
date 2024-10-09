@@ -10,7 +10,6 @@ import {
   onLeaveRoom,
   onPlayAgain,
   onPlayerMove,
-  onPlayerReady,
   onStartGame,
 } from './serverHandler';
 
@@ -56,8 +55,6 @@ io.on('connection', (socket: Socket) => {
   socket.on('startGame', onStartGame(socket, games));
 
   socket.on('playAgain', onPlayAgain(socket, games));
-
-  socket.on('playerReady', onPlayerReady(io, games, socket));
 
   socket.on('playerMove', onPlayerMove(socket, games));
 

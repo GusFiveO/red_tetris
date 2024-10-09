@@ -35,7 +35,6 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
     }
 
     const game = games[roomName];
-    const newPlayer = new Player(socket.id, playerName, game.tetrominoSequence);
     if (game.isStarted()) {
       socket.emit(
         'gameAlreadyStarted',
@@ -48,6 +47,10 @@ export const addPlayer = (io: Server, socket: Socket, games: Games) => {
       return { id: player.id, name: player.name, spectrum: [] };
     });
     socket.emit('currentPlayers', allOponents);
+
+    const newPlayer = new Player(socket.id, playerName, [
+      ...game.tetrominoSequence,
+    ]);
 
     game.addPlayer(newPlayer);
 
@@ -87,27 +90,6 @@ export const onPlayAgain = (socket: Socket, games: Games) => {
   };
 };
 
-export const onPlayerReady = (io: Server, games: Games, socket: Socket) => {
-  return (payload: { roomName: string; newState: boolean }) => {
-    const { roomName, newState } = payload;
-    if (!games[roomName]) {
-      return;
-    }
-    const game = games[roomName];
-    const player = game.players[socket.id];
-
-    player.ready = newState;
-    io.to(roomName).emit('playerReady', {
-      playerId: socket.id,
-      state: newState,
-    });
-    console.log('allplayer are ready ?:', game.areAllPlayersReady());
-    if (game.areAllPlayersReady()) {
-      game.start();
-    }
-  };
-};
-
 export const onPlayerMove = (socket: Socket, games: Games) => {
   return (moveData: { roomName: string; moveType: string }) => {
     const { roomName, moveType } = moveData;
@@ -124,7 +106,6 @@ export const onLeaveRoom = (io: Server, socket: Socket, games: Games) => {
     console.log(`Player leaved ${socket.id}`);
     for (const roomName in games) {
       const game = games[roomName];
-      console.log('leaving while started');
       if (game.hasPlayer(socket.id)) {
         game.removePlayer(socket.id);
         socket.to(roomName).emit('playerLeaved', socket.id);

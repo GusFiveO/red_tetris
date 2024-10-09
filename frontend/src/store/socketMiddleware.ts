@@ -24,25 +24,6 @@ const SOCKET_CONNECT = 'SOCKET_CONNECT';
 const SOCKET_DISCONNECT = 'SOCKET_DISCONNECT';
 const SOCKET_EMIT = 'SOCKET_EMIT';
 
-// interface ConnectSocketAction {
-//   type: typeof SOCKET_CONNECT;
-//   payload: { url: string; room: string; playerName: string };
-// }
-
-// interface EmitSocketEventAction {
-//   type: typeof SOCKET_EMIT;
-//   payload: { event: string; data?: any };
-// }
-
-// interface DisconnectSocketAction {
-//   type: typeof SOCKET_DISCONNECT;
-// }
-
-// type SocketActions =
-//   | ConnectSocketAction
-//   | EmitSocketEventAction
-//   | DisconnectSocketAction;
-
 export const socketMiddleware: Middleware = (store) => {
   let socket: Socket | null = null;
 
@@ -107,8 +88,9 @@ export const socketMiddleware: Middleware = (store) => {
         });
 
         socket.on('gameEnded', () => {
-          store.dispatch(setGameState(GameState.InLobby));
+          console.log('GAME ENDED');
           store.dispatch(setIsRunning(false));
+          store.dispatch(setGameState(GameState.InLobby));
         });
 
         socket.on('gameOver', (message: string) => {

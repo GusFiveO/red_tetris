@@ -15,7 +15,6 @@ export class Player extends EventEmitter {
   score: number;
   level: number;
   field: number[][];
-  ready: boolean;
   gameOver: boolean;
   pieceDropInterval: number;
   currentPiece: Piece;
@@ -33,7 +32,6 @@ export class Player extends EventEmitter {
     this.score = 0;
     this.level = 1;
     this.linesCleared = 0;
-    this.ready = false;
     this.gameOver = false;
     this.pieceDropInterval = 1000;
     this.tetrominoSequence = tetrominoSequence;
@@ -44,9 +42,6 @@ export class Player extends EventEmitter {
   }
 
   // PLAYER STATE
-  isReady() {
-    return this.ready;
-  }
 
   levelUp() {
     this.level += 1;
@@ -105,11 +100,8 @@ export class Player extends EventEmitter {
     this.score = 0;
     this.level = 1;
     this.linesCleared = 0;
-    this.ready = false;
-    this.gameOver = false;
     this.pieceDropInterval = 1000;
     this.tetrominoSequence = tetrominoSequence;
-    console.log(tetrominoSequence);
     this.currentPiece = this.generateNewPiece();
     this.spectrum = [];
     this.pendingPenality = [];
@@ -117,10 +109,10 @@ export class Player extends EventEmitter {
 
   // GAME LOOP
   startGameLoop() {
-    console.log(this.tetrominoSequence);
     this.stopGameLoop();
     this.emit('updateGameState');
     this.emit('updateSpectrum');
+    this.emit('updateNextPiece');
 
     const intervalTime = this.pieceDropInterval;
 
@@ -218,10 +210,8 @@ export class Player extends EventEmitter {
     }
 
     const spectrum = getSpectrum(this.field);
-    console.log('spectrum:', spectrum);
     if (this.spectrum != spectrum) {
       this.spectrum = spectrum;
-      console.log('updateSpectrum');
       this.emit('updateSpectrum');
     }
   }
@@ -294,7 +284,6 @@ export class Player extends EventEmitter {
             this.field[fieldY]?.[fieldX] != 0 ||
             this.field[fieldY]?.[fieldX] < 0
           ) {
-            console.log('COLLIDES');
             return true;
           }
         }

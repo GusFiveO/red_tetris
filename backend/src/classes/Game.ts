@@ -19,7 +19,6 @@ export class Game extends EventEmitter {
     this.roomName = roomName;
     this.players = {};
     this.tetrominoSequence = this.generateTetrominoSequence();
-    // this.addPlayer(owner);
     this.started = false;
   }
   // INITIALIZATION
@@ -49,27 +48,21 @@ export class Game extends EventEmitter {
     this.started = true;
     this.emit('gameStarted');
     for (const player of Object.values(this.players)) {
-      console.log(player.name, player.gameOver);
+      player.gameOver = false;
       player.startGameLoop();
-      this.emit('updateNextPiece', {
-        playerId: player.id,
-        nextPiece: player.getNextPiece().getState(),
-      });
     }
   }
 
   stop() {
+    this.started = false;
     for (const player of Object.values(this.players)) {
       player.stopGameLoop();
-      this.started = false;
     }
   }
 
   // PLAYER RELATED METHODS
   addPlayer(player: Player) {
     if (!this.players[player.id]) {
-      player.tetrominoSequence = [...this.tetrominoSequence];
-
       this.playerEventHandler(player);
 
       console.log(`Player ${player.name} join the game ${this.roomName}`);
@@ -112,18 +105,6 @@ export class Game extends EventEmitter {
       }
     }
     return null;
-  }
-
-  areAllPlayersReady() {
-    if (this.isEmpty()) {
-      return false;
-    }
-    for (const player of Object.values(this.players)) {
-      if (!player.isReady()) {
-        return false;
-      }
-    }
-    return true;
   }
 
   playerEventHandler(newPlayer: Player) {
@@ -175,7 +156,6 @@ export class Game extends EventEmitter {
     });
 
     newPlayer.on('updateNextPiece', () => {
-      console.log('UPDATE NEXT PIECE IN GAME');
       this.emit('updateNextPiece', {
         playerId: newPlayer.id,
         nextPiece: newPlayer.getNextPiece().getState(),
@@ -185,6 +165,9 @@ export class Game extends EventEmitter {
 
   // GAMEPLAY
   handlePlayerMove(playerId: string, moveType: string) {
+    if (!this.started) {
+      return;
+    }
     const player = this.players[playerId];
     if (player && !player.gameOver) {
       if (moveType == 'left' || moveType == 'right') {
@@ -201,6 +184,7 @@ export class Game extends EventEmitter {
       }
     }
   }
+
   applyPenalities(playerExceptionId: string, nbLines: number) {
     for (const player of Object.values(this.players)) {
       if (player.id != playerExceptionId) {
