@@ -90,7 +90,7 @@ export const socketMiddleware: Middleware = (store) => {
         socket.on('gameEnded', () => {
           console.log('GAME ENDED');
           store.dispatch(setIsRunning(false));
-          store.dispatch(setGameState(GameState.InLobby));
+          // store.dispatch(setGameState(GameState.InLobby));
         });
 
         socket.on('gameOver', (message: string) => {

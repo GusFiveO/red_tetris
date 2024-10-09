@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { RootState, useAppSelector } from '../store/store';
 import { getColorForNumber } from '../utils/gameUtils';
 
-const NextPiece = () => {
+const NextPiece = ({ children }) => {
   const nextPiece = useAppSelector(
     (state: RootState) => state.player.nextPiece
   );
@@ -20,7 +20,12 @@ const NextPiece = () => {
     ));
   }, [nextPiece]);
 
-  return <div className='field-container'>{nextPieceComponent}</div>;
+  return (
+    <div className='relative field-container'>
+      {nextPieceComponent}
+      {children}
+    </div>
+  );
 };
 
 export default NextPiece;

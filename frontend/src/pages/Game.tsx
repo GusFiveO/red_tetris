@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
-import Modal from '../components/Modal';
-import ModalButton from '../components/ModalButton';
 import { Spectrum } from '../components/Spectrum';
 import {
   connectSocket,
@@ -25,10 +23,9 @@ export type ScoreInfo = {
 
 export const Game = () => {
   const { room, playerName } = useParams();
-  // const [gameState, setGameState] = useState<GameState>(GameState.InLobby);
-  const [modalText, setModalText] = useState<string | null>(null);
 
   const gameState = useAppSelector((state: RootState) => state.game.gameState);
+  const isRunning = useAppSelector((state: RootState) => state.game.isRunning);
   const isOwner = useAppSelector((state: RootState) => state.game.isOwner);
 
   const navigate = useNavigate();
@@ -63,40 +60,28 @@ export const Game = () => {
         room : {room}
       </div>
       <div className='fixed right-px top-px'>
-        <ModalButton buttonText='QUIT'>
-          <div>Leave Game ?</div>
-          <Button onClick={leaveRoom}>yes</Button>
-        </ModalButton>
+        <Button onClick={leaveRoom}>
+          QUIT <img src='/exit.svg' className='h-5 w-5 m-2'></img>
+        </Button>
       </div>
       <div className='w-[45%] flex flex-col items-end'>
-        {gameState === GameState.InLobby && isOwner ? (
+        {!isRunning && isOwner ? (
           <Button onClick={() => startGame(room)}>start</Button>
         ) : null}
       </div>
       <div className='w-2/3 flex  items-center'>
         <SocketContext.Provider value={socket}>
-          <Field />
+          <Field
+            message={
+              gameState === GameState.GameOver
+                ? 'YOU LOSE 😰'
+                : gameState === GameState.GameWin
+                ? 'YOU WIN !'
+                : undefined
+            }
+          />
         </SocketContext.Provider>
         <Spectrum />
-        {gameState === GameState.GameOver ? (
-          <div className='fixed inset-0 z-50 flex items-center justify-center'>
-            {/* <div className='fixed inset-0 bg-gray-900 opacity-80'></div> */}
-            <div className='info-container z-50 p-2'>GAME OVER</div>
-          </div>
-        ) : null}
-        {modalText === null ? null : (
-          <Modal>
-            {modalText}
-            {gameState === GameState.GameOver ||
-            gameState === GameState.GameWin ? (
-              <Button onClick={() => window.location.reload()}>
-                play again
-              </Button>
-            ) : gameState === GameState.InGame ? (
-              <Button onClick={leaveRoom}>quit</Button>
-            ) : null}
-          </Modal>
-        )}
       </div>
     </div>
   );

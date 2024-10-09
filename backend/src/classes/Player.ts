@@ -42,7 +42,6 @@ export class Player extends EventEmitter {
   }
 
   // PLAYER STATE
-
   levelUp() {
     this.level += 1;
 
@@ -105,6 +104,7 @@ export class Player extends EventEmitter {
     this.currentPiece = this.generateNewPiece();
     this.spectrum = [];
     this.pendingPenality = [];
+    this.stopGameLoop();
   }
 
   // GAME LOOP

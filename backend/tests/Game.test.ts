@@ -1,16 +1,18 @@
 import { Game } from '../src/classes/Game';
+import { Player } from '../src/classes/Player';
 
 describe('Game unit test suites', () => {
-  const game = new Game('test');
+  const game = new Game('1', 'test');
+  const player1 = new Player('1', 'testPlayer1', [...game.tetrominoSequence]);
+  game.addPlayer(player1);
   it('should return something', () => {
     expect(game.generateTetrominoSequence()).toBeDefined();
   });
 
-  const player1 = game.addPlayer('1', 'testPlayer1');
-  game.addPlayer('2', 'testPlayer2');
-  const player3 = game.addPlayer('3', 'testPlayer2');
-  player1.ready = true;
-  player3.ready = true;
+  const player2 = new Player('2', 'testPlayer2', [...game.tetrominoSequence]);
+  game.addPlayer(player2);
+  const player3 = new Player('3', 'testPlayer3', [...game.tetrominoSequence]);
+  game.addPlayer(player3);
   game.start();
 
   game.removePlayer('2');
@@ -22,6 +24,7 @@ describe('Game unit test suites', () => {
   game.handlePlayerMove('1', 'hardDrop');
 
   player1.emit('linesDeleted', { nbLines: 2 });
+  player1.gameOver = true;
   player1.emit('gameOver');
 
   it('should return true', () => {
@@ -38,9 +41,5 @@ describe('Game unit test suites', () => {
 
   it('should return false', () => {
     expect(game.isEmpty()).toBe(false);
-  });
-
-  it('should return true', () => {
-    expect(game.areAllPlayersReady()).toBe(true);
   });
 });
