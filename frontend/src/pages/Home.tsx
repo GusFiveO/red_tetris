@@ -1,16 +1,18 @@
-import { Button } from '../components/Button';
-import { withAuth } from '../hoc/RootHoc';
+import { Scoreboard } from '../components/Scoreboard';
 import '../styles/custom-utilities.css';
 
-export const Home = withAuth(() => {
+export const Home = () => {
   return (
     <div className='main-container flex flex-col items-center justify-center'>
       <div className='bg-red-500'>RED-TETRIS</div>
-      <Button
-        onClick={() => (window.location.href = 'http://localhost:3000/#lol')}
+
+      <Scoreboard />
+      {/* <Button
+        onClick={() => api.post('/scoreboard', { name: 'lol', score: 1000 })}
       >
-        PLAY
-      </Button>
+        PUSH SCORE
+      </Button> */}
+      <div>To join a game use the URL "/:room/:player_name"</div>
     </div>
   );
-});
+};

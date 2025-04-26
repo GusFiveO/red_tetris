@@ -10,9 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Player {
-  id            Int     @id @default(autoincrement())
-  email         String  @unique
-  name          String?
-  refreshToken  String
+model PlayerScore {
+  id    Int     @id @default(autoincrement())
+  name  String
+  score Int
 }

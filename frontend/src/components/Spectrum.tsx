@@ -1,4 +1,4 @@
-import { PlayerSpectrum } from '../pages/Game';
+import { RootState, useAppSelector } from '../store/store';
 import '../styles/custom-utilities.css';
 import '../styles/hide-scrollbar.css';
 import { createMatrix } from '../utils/gameUtils';
@@ -6,40 +6,47 @@ import { createMatrix } from '../utils/gameUtils';
 const COLUMNS = 10;
 const ROWS = 20;
 
-type SpectrumProps = {
-  opponentList: PlayerSpectrum[];
-};
+export const Spectrum = () => {
+  const opponentList = useAppSelector((state: RootState) => state.opponents);
 
-export const Spectrum = ({ opponentList }: SpectrumProps) => {
-  const opponentsComponent = opponentList
+  const opponentsComponent = [...opponentList]
     .sort((a, b) => {
-      return a.score > b.score ? 1 : 0;
+      return a.score < b.score ? 1 : 0;
     })
-    .map(({ name, firstLine }) => {
+    .map(({ name, spectrum }, index) => {
       const zerosMatrix = createMatrix(ROWS, COLUMNS);
       return (
         <div
-          key={name}
-          className='flex flex-col items-center justify-center m-2 md:text-base text-xs'
+          key={index}
+          className='flex flex-col items-center justify-center w-38'
         >
-          <div>{name}</div>
-          {zerosMatrix.map((row, rowIndex) => (
-            <div key={rowIndex} className='flex'>
-              {row.map((elem, colIndex) => (
-                <div
-                  key={colIndex}
-                  className={`spectre-block ${
-                    ROWS - rowIndex < firstLine ? 'bg-black' : 'bg-gray-600'
-                  }`}
-                ></div>
-              ))}
-            </div>
-          ))}
+          <div className='m-2 2xl:text-xl md:text-base text-xs'>
+            {name.length > 8 ? name.substring(0, 8) + '...' : name}
+          </div>
+          <div className='border border-slate-400 rounded'>
+            {zerosMatrix.map((row, rowIndex) => (
+              <div key={rowIndex} className='flex'>
+                {row.map((elem, colIndex) => (
+                  <div
+                    key={colIndex}
+                    className={`spectre-block ${
+                      spectrum.length != 0 &&
+                      ROWS - rowIndex <= spectrum[colIndex]
+                        ? 'bg-black'
+                        : 'bg-gray-600'
+                    }`}
+                  ></div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       );
     });
 
-  return (
-    <div className='info-container scrollbar-hide'>{opponentsComponent}</div>
-  );
+  return opponentList.length !== 0 ? (
+    <div className='info-container max-h-[50%] scrollbar-hide overflow-y-scroll w-fit'>
+      {opponentsComponent}
+    </div>
+  ) : null;
 };

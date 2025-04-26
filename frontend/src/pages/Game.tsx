@@ -1,104 +1,96 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { io } from 'socket.io-client';
+import { Button } from '../components/Button';
 import { Field } from '../components/Field';
-import { Scoreboard } from '../components/Scoreboard';
+import { LevelSelector } from '../components/LevelSelector';
 import { Spectrum } from '../components/Spectrum';
+import {
+  connectSocket,
+  disconnectSocket,
+  emitSocketEvent,
+} from '../store/actions/socketActions';
+import { GameState } from '../store/features/gameSlice';
+import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import '../styles/custom-utilities.css';
-import { createMatrix, createRandomMatrix } from '../utils/gameUtils';
 
-const COLUMNS = 10;
-const ROWS = 20;
-
-const opponentsSample = [
-  { name: 'Player 1', firstLine: 2, score: 100 },
-  { name: 'Player 2', firstLine: 5, score: 150 },
-  { name: 'Player 3', firstLine: 8, score: 80 },
-  { name: 'Player 4', firstLine: 11, score: 200 },
-  { name: 'Player 5', firstLine: 14, score: 120 },
-  { name: 'Player 6', firstLine: 2, score: 90 },
-  { name: 'Player 7', firstLine: 5, score: 110 },
-  { name: 'Player 8', firstLine: 8, score: 180 },
-  { name: 'Player 9', firstLine: 11, score: 160 },
-  { name: 'Player 10', firstLine: 15, score: 140 },
-];
-
-const scoreSample: ScoreInfo[] = [
-  { name: 'Player 1', score: 100 },
-  { name: 'Player 2', score: 150 },
-  { name: 'Player 3', score: 80 },
-  { name: 'Player 4', score: 200 },
-  { name: 'Player 5', score: 120 },
-  { name: 'Player 6', score: 90 },
-  { name: 'Player 7', score: 110 },
-  { name: 'Player 8', score: 180 },
-  { name: 'Player 9', score: 160 },
-  { name: 'Player 10', score: 140 },
-];
-
-type Matrix = number[][];
-
-export type PlayerSpectrum = {
-  name: string;
-  firstLine: number;
-  score: number;
-};
+const socket = io(import.meta.env.VITE_API_URL);
+export const SocketContext = React.createContext(socket);
 
 export type ScoreInfo = {
   name: string;
   score: number;
 };
 
-type GameProps = {
-  hash: string;
-};
+export const Game = () => {
+  const { room, playerName } = useParams();
 
-export const Game = ({ hash }: GameProps) => {
-  const [field, setField] = useState<Matrix>(createMatrix(ROWS, COLUMNS));
-  const [opponents, setOpponents] = useState<PlayerSpectrum[]>(opponentsSample);
-  const [scores, setScores] = useState<ScoreInfo[]>(scoreSample);
+  // const [selectedLevel, setSelectedLevel] = useState<number>(1);
+
+  const gameState = useAppSelector((state: RootState) => state.game.gameState);
+  const isRunning = useAppSelector((state: RootState) => state.game.isRunning);
+  const isOwner = useAppSelector((state: RootState) => state.game.isOwner);
+  const startLevel = useAppSelector((state: RootState) => state.game.level);
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    let lastKeyPressTime = 0;
-    const throttleInterval = 200;
-
-    const handleKeyPress = (event: KeyboardEvent) => {
-      const currentTime = new Date().getTime();
-      if (
-        event.key == ' ' ||
-        event.key === 'ArrowDown' ||
-        event.key === 'ArrowUp'
-      ) {
-        event.preventDefault();
-      }
-      if (currentTime - lastKeyPressTime > throttleInterval) {
-        if (event.key === 'ArrowUp') {
-          console.log(event.key);
-        } else if (event.key === 'ArrowDown') {
-          console.log(event.key);
-        } else if (event.key === 'ArrowLeft') {
-          console.log(event.key);
-        } else if (event.key === 'ArrowRight') {
-          console.log(event.key);
-        } else if (event.key === ' ') {
-          setField(createRandomMatrix(ROWS, COLUMNS));
-          console.log(event.key);
-        }
-
-        lastKeyPressTime = currentTime;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
+    if (room && playerName) {
+      dispatch(
+        connectSocket(import.meta.env.VITE_API_URL as string, room, playerName)
+      );
+    }
 
     return () => {
-      window.removeEventListener('keydown', handleKeyPress);
+      dispatch(disconnectSocket());
     };
-  }, []);
+  }, [dispatch, room, playerName]);
+
+  function leaveRoom() {
+    dispatch(emitSocketEvent('leaveRoom'));
+    navigate('/');
+  }
+
+  function startGame(roomName: string | undefined) {
+    dispatch(
+      emitSocketEvent('startGame', { roomName: roomName, level: startLevel })
+    );
+  }
 
   return (
     <div className='main-container flex justify-center items-center'>
-      <Scoreboard scoreList={scores} />
-      <Field field={field} />
-      <Spectrum opponentList={opponents} />
+      <div className='fixed start-px top-px text-2xl text-slate-600'>
+        room : {room}
+      </div>
+      <div className='fixed right-px top-px'>
+        <Button onClick={leaveRoom}>
+          QUIT <img src='/exit.svg' className='h-5 w-5 m-2'></img>
+        </Button>
+      </div>
+      <div className='w-[45%] flex flex-col items-end'>
+        {!isRunning && isOwner ? (
+          <div className='flex flex-col items-center'>
+            {/* <LevelSelector onChangeLevel={handleLevelChange} /> */}
+            <LevelSelector />
+            <Button onClick={() => startGame(room)}>start</Button>
+          </div>
+        ) : null}
+      </div>
+      <div className='w-2/3 flex  items-center'>
+        <SocketContext.Provider value={socket}>
+          <Field
+            message={
+              gameState === GameState.GameOver
+                ? 'YOU LOSE 😰'
+                : gameState === GameState.GameWin
+                ? 'YOU WIN !'
+                : undefined
+            }
+          />
+        </SocketContext.Provider>
+        <Spectrum />
+      </div>
     </div>
   );
 };

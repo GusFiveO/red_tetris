@@ -1,9 +1,9 @@
 .main-container {
-    @apply bg-slate-800 text-white h-svh font-mono
+    @apply bg-slate-800 text-white h-svh font-mono bg-gradient-to-tr from-slate-800 via-slate-900 to-black
 }
 
 .btn {
-    @apply bg-gray-300 text-slate-800 rounded-md m-1 p-1 shadow-gray-500 shadow-md
+    @apply flex items-center bg-gray-300 text-slate-800 rounded-md m-2 px-2 shadow-gray-500 shadow-md 
 }
 
 .btn:hover {
@@ -11,23 +11,22 @@
 }
 
 .block {
-    @apply lg:w-14 lg:h-14 md:w-9 md:h-9 w-6 h-6 border border-slate-900 rounded 
+    @apply 2xl:w-9 2xl:h-9 md:w-8 md:h-8 w-6 h-6 border border-slate-900 rounded 
 }
 
 .field-container {
-    @apply flex flex-col items-center justify-center m-2 border border-slate-400 shadow-2xl rounded-md
+    @apply flex flex-col items-center justify-center m-4 border border-slate-400 shadow-2xl rounded-md
 }
 
+
 .info-container {
-    @apply flex flex-col items-center bg-slate-900 rounded-md overflow-y-scroll h-auto max-h-[60%] m-1 border border-slate-400 shadow-2xl
+    @apply flex flex-col items-center bg-slate-900 rounded-md border border-slate-400 shadow-2xl shadow-inner shadow-slate-300
 }
 
 .spectre {
-    /* @apply h-2 text-xs */
     @apply h-2 
 }
 
 .spectre-block {
-    /* @apply lg:w-1 lg:h-1 md:w-0.5 md:h-0.5 w-0.5 h-0.5 border border-black rounded */
-    @apply lg:w-1.5 lg:h-1.5 md:w-1 md:h-1 md:border w-0.5 h-0.5 border-black rounded
+    @apply 2xl:w-1.5 2xl:h-1.5 md:w-1 md:h-1 md:border w-0.5 h-0.5 border-black rounded
 }
