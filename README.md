@@ -105,7 +105,7 @@ docker-compose up
 1. **Access the Application**: Open your web browser and navigate to `http://localhost:${FRONT_PORT}`.
 2. **Home Screen**: You will be greeted with the leaderboard home screen.
 3. **Joining a Room**: If you have a room name, append it to the URL in the format `http://localhost:${FRONT_PORT}/:room_name/:player_name` to join the room directly.
-4. **Creating a Room**: If no existing room, you will automatically create a new room and can invite others by sharing your room URL.
+4. **Creating a Room**: If no existing room, you will automatically create a new room and can invite others by sharing your room URL, you can also choose the starting speed level of the game.
 
 ### Playing the Game
 

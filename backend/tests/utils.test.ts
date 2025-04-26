@@ -58,19 +58,17 @@ describe('utils unit tests suites', () => {
   it('should match expected field', () => {
     expect(mergedField).toStrictEqual(expectedMergedField);
   }),
-  describe('Spectrum unit test', () => {
-    console.log('Spectrum')
-    const testMatrix = [
-      [0, 0, 0, 0],
-      [0, 0, 1, 0],
-      [0, 0, 1, 4],
-      [2, 0, 1, 4],
-      [2, 3, 1, 4],
-    ]; 
-    const result = getSpectrum(testMatrix)
-    console.log(result)
-    it('should match [2, 1, 4, 3]', () => {
-      expect(result).toStrictEqual([2, 1, 4, 3])
-    })
-  });
+    describe('Spectrum unit test', () => {
+      const testMatrix = [
+        [0, 0, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 4],
+        [2, 0, 1, 4],
+        [2, 3, 1, 4],
+      ];
+      const result = getSpectrum(testMatrix);
+      it('should match [2, 1, 4, 3]', () => {
+        expect(result).toStrictEqual([2, 1, 4, 3]);
+      });
+    });
 });

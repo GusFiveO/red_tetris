@@ -29,7 +29,7 @@ export const Scoreboard = () => {
         {/* {`${name.padEnd(12, '\u00A0')}:  ${score
           .toString()
           .padStart(4, '\u00A0')}`} */}
-        {`${(name.length > 8 ? name.substring(0, 8) + "..." : name).padEnd(
+        {`${(name.length > 11 ? name.substring(0, 8) + "..." : name).padEnd(
           12,
           "\u00A0"
         )}:  ${score.toString().padStart(4, "\u00A0")}`}

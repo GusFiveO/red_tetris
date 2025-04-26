@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     environment:
       FRONT_PORT: ${FRONT_PORT}
+      VITE_API_URL: ${VITE_API_URL}
     ports:
       - "${FRONT_PORT}:${FRONT_PORT}"
     volumes:

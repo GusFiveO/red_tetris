@@ -15,7 +15,6 @@ export class Player extends EventEmitter {
   score: number;
   level: number;
   field: number[][];
-  ready: boolean;
   gameOver: boolean;
   pieceDropInterval: number;
   currentPiece: Piece;
@@ -33,7 +32,6 @@ export class Player extends EventEmitter {
     this.score = 0;
     this.level = 1;
     this.linesCleared = 0;
-    this.ready = false;
     this.gameOver = false;
     this.pieceDropInterval = 1000;
     this.tetrominoSequence = tetrominoSequence;
@@ -44,10 +42,6 @@ export class Player extends EventEmitter {
   }
 
   // PLAYER STATE
-  isReady() {
-    return this.ready;
-  }
-
   levelUp() {
     this.level += 1;
 
@@ -100,10 +94,25 @@ export class Player extends EventEmitter {
     return new Piece(TETROMINOS[this.tetrominoSequence[0]]);
   }
 
+  reset(tetrominoSequence: string[]) {
+    this.field = generateZerosMatrix(20, 10);
+    this.score = 0;
+    this.level = 1;
+    this.linesCleared = 0;
+    this.pieceDropInterval = 1000;
+    this.tetrominoSequence = tetrominoSequence;
+    this.currentPiece = this.generateNewPiece();
+    this.spectrum = [];
+    this.pendingPenality = [];
+    this.stopGameLoop();
+  }
+
   // GAME LOOP
   startGameLoop() {
     this.stopGameLoop();
     this.emit('updateGameState');
+    this.emit('updateSpectrum');
+    this.emit('updateNextPiece');
 
     const intervalTime = this.pieceDropInterval;
 
@@ -111,6 +120,7 @@ export class Player extends EventEmitter {
       this.dropPiece();
       if (this.gameOver) {
         this.emit('gameOver');
+        this.stopGameLoop();
       }
     }, intervalTime);
   }
@@ -197,15 +207,12 @@ export class Player extends EventEmitter {
     this.currentPiece = this.generateNewPiece();
     if (this.hasLost()) {
       this.gameOver = true;
-      // this.emit('gameOver');
     }
 
     const spectrum = getSpectrum(this.field);
-    console.log('spectrum:', spectrum)
     if (this.spectrum != spectrum) {
-      this.spectrum = spectrum
-      console.log('updateSpectrum')
-      this.emit('updateSpectrum')
+      this.spectrum = spectrum;
+      this.emit('updateSpectrum');
     }
   }
 

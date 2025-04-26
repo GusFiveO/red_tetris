@@ -7,17 +7,19 @@ interface Players {
 }
 
 export class Game extends EventEmitter {
+  ownerId: string;
   roomName: string;
   players: Players;
   started: boolean;
   tetrominoSequence: string[];
 
-  constructor(roomName: string) {
+  constructor(ownerId: string, roomName: string) {
     super();
+    this.ownerId = ownerId;
     this.roomName = roomName;
     this.players = {};
-    this.started = false;
     this.tetrominoSequence = this.generateTetrominoSequence();
+    this.started = false;
   }
   // INITIALIZATION
 
@@ -42,39 +44,36 @@ export class Game extends EventEmitter {
     return Object.keys(this.players).length === 0;
   }
 
-  start() {
+  start(level: number) {
     this.started = true;
     this.emit('gameStarted');
+    console.log('start level:', level);
     for (const player of Object.values(this.players)) {
-      player.startGameLoop();
-      this.emit('updateNextPiece', {
-        playerId: player.id,
-        nextPiece: player.getNextPiece().getState(),
-      });
+      player.level = level;
+      player.linesCleared = (level - 1) * 10;
+      player.gameOver = false;
+      // player.startGameLoop();
+      player.updateDropInterval();
     }
   }
 
   stop() {
+    this.started = false;
     for (const player of Object.values(this.players)) {
       player.stopGameLoop();
-      this.started = false;
     }
   }
 
   // PLAYER RELATED METHODS
-  addPlayer(playerId: string, playerName: string) {
-    if (!this.players[playerId]) {
-      const newPlayer = new Player(playerId, playerName, [
-        ...this.tetrominoSequence,
-      ]);
+  addPlayer(player: Player) {
+    if (!this.players[player.id]) {
+      this.playerEventHandler(player);
 
-      this.playerEventHandler(newPlayer);
-
-      console.log(`Player ${playerName} join the game ${this.roomName}`);
-      this.players[playerId] = newPlayer;
-      return this.players[playerId];
+      console.log(`Player ${player.name} join the game ${this.roomName}`);
+      this.players[player.id] = player;
+      return this.players[player.id];
     } else {
-      return this.players[playerId];
+      return this.players[player.id];
     }
   }
 
@@ -112,29 +111,16 @@ export class Game extends EventEmitter {
     return null;
   }
 
-  areAllPlayersReady() {
-    if (this.isEmpty()) {
-      return false;
-    }
-    for (const player of Object.values(this.players)) {
-      if (!player.isReady()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   playerEventHandler(newPlayer: Player) {
     const playerId = newPlayer.id;
 
     newPlayer.on('gameOver', () => {
+      const winner = this.getWinner();
       this.emit('gameOver', {
         playerId: playerId,
         playerName: newPlayer.name,
         playerScore: newPlayer.score,
       });
-      this.players[playerId].gameOver = true;
-      const winner = this.getWinner();
       if (winner) {
         this.stop();
         this.emit('gameWinner', {
@@ -174,7 +160,6 @@ export class Game extends EventEmitter {
     });
 
     newPlayer.on('updateNextPiece', () => {
-      console.log('UPDATE NEXT PIECE IN GAME');
       this.emit('updateNextPiece', {
         playerId: newPlayer.id,
         nextPiece: newPlayer.getNextPiece().getState(),
@@ -184,6 +169,9 @@ export class Game extends EventEmitter {
 
   // GAMEPLAY
   handlePlayerMove(playerId: string, moveType: string) {
+    if (!this.started) {
+      return;
+    }
     const player = this.players[playerId];
     if (player && !player.gameOver) {
       if (moveType == 'left' || moveType == 'right') {
@@ -200,6 +188,7 @@ export class Game extends EventEmitter {
       }
     }
   }
+
   applyPenalities(playerExceptionId: string, nbLines: number) {
     for (const player of Object.values(this.players)) {
       if (player.id != playerExceptionId) {
